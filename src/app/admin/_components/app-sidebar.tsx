@@ -10,34 +10,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { FaHome } from "react-icons/fa";
+import { FaGraduationCap } from "react-icons/fa";
 
 // Menu items.
 const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
+  { title: "Home", url: "/", icon: <FaHome /> },
+  { title: "Courses", url: "/admin/courses", icon: <FaGraduationCap /> },
 ];
 
 export function AppSidebar() {
@@ -52,7 +31,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
-                      <item.icon />
+                      {item.icon}
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>

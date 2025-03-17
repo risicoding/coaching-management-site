@@ -3,6 +3,7 @@ import { createInsertSchema } from "drizzle-zod";
 import {
   index,
   integer,
+  pgEnum,
   pgTable,
   primaryKey,
   timestamp,
@@ -14,7 +15,7 @@ export const courses = pgTable(
   {
     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
     name: varchar("name", { length: 256 }).notNull(),
-    pricing: integer("price").notNull(),
+    pricing: integer("pricing").notNull(),
     createdAt: timestamp("created-at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -31,69 +32,53 @@ export const courses = pgTable(
 );
 
 export const coursesRelations = relations(courses, ({ many }) => ({
-  coursesToTeachers: many(coursesToTeachers),
+  coursesToUsers: many(userCourse),
 }));
 
-export const teachers = pgTable(
-  "teachers",
-  {
-    id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-    name: varchar("name", { length: 256 }).notNull(),
-    email: varchar("email", { length: 256 }).notNull(),
-    userId: varchar("user-id").notNull().unique(),
-    pricing: integer("pricing").notNull(),
-    createdAt: timestamp("created-at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date(),
-    ),
-  },
+export const userRoleEnum = pgEnum("role", ["admin", "student"]);
 
-  //INDEX ON NAME
+export const users = pgTable("users", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: varchar("name").notNull(),
+  email: varchar("email").notNull().unique(),
+  username: varchar("username"),
+  image: varchar("image"),
+  clerkUserId: varchar("clerk-user-id").notNull().unique(),
+  role: userRoleEnum("role"),
+});
 
-  (example) => ({
-    emailIndex: index("teacher_name_idx").on(example.email),
-    userIdIndex: index("teacher_userid-idx").on(example.userId),
-  }),
-);
-
-export const teachersRelations = relations(teachers, ({ many }) => ({
-  coursesToTeachers: many(coursesToTeachers),
+export const userRelations = relations(users, ({ many }) => ({
+  usersToCourses: many(userCourse),
 }));
 
-export const coursesToTeachers = pgTable(
-  "teacher_to_courses",
-
+export const userCourse = pgTable(
+  "user-course",
   {
-    courseId: integer("user_id")
+    userId: integer("user-id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    courseId: integer("id")
       .notNull()
       .references(() => courses.id, { onDelete: "cascade" }),
-    teacherId: integer("teacher_id")
+    userClerkId: varchar("user-clerk-id")
       .notNull()
-      .references(() => teachers.id),
-    teacherUserId: varchar("teacher_user_id")
-      .notNull()
-      .references(() => teachers.userId, { onDelete: "cascade" }),
+      .references(() => users.clerkUserId, { onDelete: "cascade" }),
   },
   (t) => ({
-    primaryKey: primaryKey({ columns: [t.courseId, t.teacherUserId] }),
+    pk: primaryKey({ columns: [t.userId, t.courseId] }),
   }),
 );
 
-export const teachersToCoursesRelations = relations(
-  coursesToTeachers,
-  ({ one }) => ({
-    course: one(courses, {
-      fields: [coursesToTeachers.courseId],
-      references: [courses.id],
-    }),
-    teacher: one(teachers, {
-      fields: [coursesToTeachers.teacherId],
-      references: [teachers.id],
-    }),
+export const usersToCoursesRelations = relations(userCourse, ({ one }) => ({
+  course: one(courses, {
+    fields: [userCourse.userId],
+    references: [courses.id],
   }),
-);
+  user: one(users, {
+    fields: [userCourse.userId],
+    references: [users.id],
+  }),
+}));
 
 export const courseInsertSchema = createInsertSchema(courses);
-export const teacherInsertSchema = createInsertSchema(teachers);
+export const userInsertSchema = createInsertSchema(users);

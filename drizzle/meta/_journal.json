@@ -8,6 +8,13 @@
       "when": 1742139823622,
       "tag": "0000_crazy_switch",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1742200940291,
+      "tag": "0001_nosy_squadron_sinister",
+      "breakpoints": true
     }
   ]
 }

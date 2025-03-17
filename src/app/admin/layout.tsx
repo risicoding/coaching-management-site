@@ -1,15 +1,16 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import React from "react";
 import { AppSidebar } from "./_components/app-sidebar";
+import Navbar from "./_components/navbar";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div>
+    <div className="p-4">
       <SidebarProvider>
         <AppSidebar />
 
-        <div className="">
-          <SidebarTrigger />
+        <div className="size-full">
+          <Navbar />
 
           {children}
         </div>
