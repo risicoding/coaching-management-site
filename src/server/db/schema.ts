@@ -1,4 +1,5 @@
 import { relations, sql } from "drizzle-orm";
+import { createInsertSchema } from "drizzle-zod";
 import {
   index,
   integer,
@@ -93,3 +94,6 @@ export const teachersToCoursesRelations = relations(
     }),
   }),
 );
+
+export const courseInsertSchema = createInsertSchema(courses);
+export const teacherInsertSchema = createInsertSchema(teachers);
