@@ -6,10 +6,10 @@ export const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/api/webhooks(.*)",
 ]);
+
 export const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
 export default clerkMiddleware(async (auth, request) => {
-  console.log((await auth()).sessionClaims?.metadata);
   if (!isPublicRoute(request)) {
     await auth.protect();
   }

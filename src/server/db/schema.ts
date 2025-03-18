@@ -24,8 +24,6 @@ export const courses = pgTable(
     ),
   },
 
-  //INDEX ON NAME
-
   (example) => ({
     nameIndex: index("courses_name_index").on(example.name),
   }),
