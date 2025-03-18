@@ -18,6 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
+import Link from "next/link";
 
 export const CourseList = () => {
   const courses = api.course.fetchAll.useQuery();
@@ -51,39 +52,43 @@ const CourseCard: React.FC<CourseCardProps> = ({ id, name, pricing }) => {
     },
   });
   return (
-    <Sheet>
-      <ContextMenu>
-        <ContextMenuTrigger className="w-full">
-          <Card className="w-full rounded-lg border border-gray-200 bg-white p-2">
-            <CardHeader className="px-2 py-2">
-              <CardTitle className="text-md font-semibold text-gray-900">
-                {name}
-              </CardTitle>
-              <p className="text-xs font-medium">&#8377;{pricing}</p>
-            </CardHeader>
-          </Card>
-        </ContextMenuTrigger>
-        <ContextMenuContent className="w-48">
-          <SheetTrigger>
-            <ContextMenuItem>
-              <FaPen className="mr-2" /> Edit
+    <Link href={`/admin/courses/${id}`}>
+      <Sheet>
+        <ContextMenu>
+          <ContextMenuTrigger className="w-full">
+            <Card className="w-full rounded-lg border border-gray-200 bg-white p-2">
+              <CardHeader className="px-2 py-2">
+                <CardTitle className="text-md font-semibold text-gray-900">
+                  {name}
+                </CardTitle>
+                <p className="text-xs font-medium">&#8377;{pricing}</p>
+              </CardHeader>
+            </Card>
+          </ContextMenuTrigger>
+          <ContextMenuContent className="w-48">
+            <SheetTrigger>
+              <ContextMenuItem>
+                <FaPen className="mr-2" /> Edit
+              </ContextMenuItem>
+            </SheetTrigger>
+            <ContextMenuItem onClick={() => deleteCourse({ id })}>
+              <FaTrash className="mr-2" /> Delete
             </ContextMenuItem>
-          </SheetTrigger>
-          <ContextMenuItem onClick={() => deleteCourse({ id })}>
-            <FaTrash className="mr-2" /> Delete
-          </ContextMenuItem>
-          <ContextMenuItem>
-            <FaLocationArrow className="mr-2" /> Open
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>Edit course</SheetTitle>
-          <SheetDescription>Fill in the course details below.</SheetDescription>
-        </SheetHeader>
-        <EditCourseForm id={id} />
-      </SheetContent>
-    </Sheet>
+            <ContextMenuItem>
+              <FaLocationArrow className="mr-2" /> Open
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Edit course</SheetTitle>
+            <SheetDescription>
+              Fill in the course details below.
+            </SheetDescription>
+          </SheetHeader>
+          <EditCourseForm id={id} />
+        </SheetContent>
+      </Sheet>
+    </Link>
   );
 };
