@@ -22,7 +22,7 @@ import {
 export const CourseList = () => {
   const courses = api.course.fetchAll.useQuery();
   return (
-    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {courses?.data?.map((course) => (
         <CourseCard
           id={course.id}
@@ -54,7 +54,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ id, name, pricing }) => {
     <Sheet>
       <ContextMenu>
         <ContextMenuTrigger className="w-full">
-          <Card className="w-full rounded-lg border border-gray-200 bg-white p-2 shadow-md transition-shadow hover:shadow-lg">
+          <Card className="w-full rounded-lg border border-gray-200 bg-white p-2">
             <CardHeader className="px-2 py-2">
               <CardTitle className="text-md font-semibold text-gray-900">
                 {name}

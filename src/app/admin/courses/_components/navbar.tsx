@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 
 const Navbar = () => {
   return (
-    <nav className="flex items-center justify-between border-b p-2">
+    <nav className="flex items-center py-2 justify-between border-b">
       {/* Left Side: Icon + Text */}
       <div className="flex items-center gap-2">
         <FaGraduationCap className="text-md" />
