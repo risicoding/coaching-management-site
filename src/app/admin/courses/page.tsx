@@ -4,7 +4,7 @@ import Navbar from "./_components/navbar";
 
 const Page = () => {
   return (
-    <div className="space-y-4 py-2">
+    <div className="space-y-4 py-5">
       <Navbar/>
       <CourseList/>
     </div>

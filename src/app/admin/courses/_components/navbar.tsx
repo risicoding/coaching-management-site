@@ -1,6 +1,7 @@
 import { FaGraduationCap } from "react-icons/fa";
 import AddCourseDialog from "./add-course";
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -8,12 +9,15 @@ const Navbar = () => {
       {/* Left Side: Icon + Text */}
       <div className="flex items-center gap-2">
         <FaGraduationCap className="text-md" />
-        <span className="text-sm font-semibold">Add Courses</span>
+        <span className="text-sm font-semibold">Courses</span>
       </div>
 
       {/* Right Side: Create Button inside Dialog */}
       <AddCourseDialog>
-        <Button>Create</Button>
+        <Button className="flex items-center gap-2">
+          Create
+          <Plus className="size-1 text-sm" />
+        </Button>
       </AddCourseDialog>
     </nav>
   );

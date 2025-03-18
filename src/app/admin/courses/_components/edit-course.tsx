@@ -33,7 +33,7 @@ type CourseSchemaType = z.infer<typeof courseSchema>;
 export const EditCourseForm = ({ id }: { id: number }) => {
   const utils = api.useUtils();
   const { data: course } = api.course.fetchById.useQuery({ id });
-  const { mutateAsync } = api.course.create.useMutation({
+  const { mutateAsync } = api.course.update.useMutation({
     onSuccess: () => utils.course.invalidate(),
   });
   const closeRef = useRef<HTMLButtonElement>(null); // Ref for SheetClose button
@@ -50,13 +50,13 @@ export const EditCourseForm = ({ id }: { id: number }) => {
     if (course) {
       form.reset({
         name: course.name,
-        pricing: course.pricing,
+        pricing:course.pricing
       });
     }
   }, [course, form]);
 
   const onSubmit = async (data: CourseSchemaType) => {
-    await mutateAsync(data);
+    await mutateAsync({...data,id});
     closeRef.current?.click(); // Close the sheet after submission
   };
 
@@ -99,7 +99,7 @@ export const EditCourseForm = ({ id }: { id: number }) => {
           )}
         />
         <Button type="submit" disabled={form.formState.isSubmitting}>
-          Add Course
+        Edit Course
         </Button>
 
         {/* Hidden SheetClose button */}

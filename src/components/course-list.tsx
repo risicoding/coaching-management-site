@@ -1,5 +1,5 @@
 "use client";
-import { Card,  CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { api } from "@/trpc/react";
 
 import {
@@ -22,7 +22,7 @@ import {
 export const CourseList = () => {
   const courses = api.course.fetchAll.useQuery();
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
       {courses?.data?.map((course) => (
         <CourseCard
           id={course.id}
@@ -54,12 +54,12 @@ const CourseCard: React.FC<CourseCardProps> = ({ id, name, pricing }) => {
     <Sheet>
       <ContextMenu>
         <ContextMenuTrigger className="w-full">
-          <Card className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-md transition-shadow hover:shadow-lg">
+          <Card className="w-full rounded-lg border border-gray-200 bg-white p-2 shadow-md transition-shadow hover:shadow-lg">
             <CardHeader className="px-2 py-2">
-              <CardTitle className="text-lg font-semibold text-gray-900">
+              <CardTitle className="text-md font-semibold text-gray-900">
                 {name}
               </CardTitle>
-              <p className="text-lg font-medium">&#8377;{pricing}</p>
+              <p className="text-xs font-medium">&#8377;{pricing}</p>
             </CardHeader>
           </Card>
         </ContextMenuTrigger>
@@ -79,7 +79,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ id, name, pricing }) => {
       </ContextMenu>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add a New Course</SheetTitle>
+          <SheetTitle>Edit course</SheetTitle>
           <SheetDescription>Fill in the course details below.</SheetDescription>
         </SheetHeader>
         <EditCourseForm id={id} />
