@@ -13,6 +13,12 @@ export const attendanceQueries = {
     });
   },
 
+  getBySubjectId:async (id: number) => {
+    return await db.query.attendance.findMany({
+      where: eq(attendance.subjectId, id),
+    });
+  },
+
   getByUserAndSubject: async (userId: number, subjectId: number) => {
     return await db.query.attendance.findMany({
       where: (att) => eq(att.userId, userId) && eq(att.subjectId, subjectId),
@@ -26,7 +32,10 @@ export const attendanceQueries = {
     });
   },
 
-  update: async (id: number, attendanceData: Partial<typeof attendance.$inferInsert>) => {
+  update: async (
+    id: number,
+    attendanceData: Partial<typeof attendance.$inferInsert>,
+  ) => {
     return await db
       .update(attendance)
       .set(attendanceData)
@@ -38,4 +47,3 @@ export const attendanceQueries = {
     return await db.delete(attendance).where(eq(attendance.id, id)).returning();
   },
 };
-

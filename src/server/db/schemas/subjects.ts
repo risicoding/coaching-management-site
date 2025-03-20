@@ -17,9 +17,9 @@ export const subjects = pgTable(
     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
     uuid: uuid("uuid").defaultRandom(),
     name: varchar("name", { length: 256 }).notNull(),
-    classId: integer("class_id")
-      .notNull()
-      .references(() => classes.id, { onDelete: "cascade" }),
+    classId: integer("class_id").references(() => classes.id, {
+      onDelete: "cascade",
+    }),
     pricing: integer("pricing").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)

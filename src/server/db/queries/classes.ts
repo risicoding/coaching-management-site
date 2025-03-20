@@ -7,6 +7,10 @@ export const classesQueries = {
     return await db.insert(classes).values(classData).returning();
   },
 
+  getAll: async () => {
+    return await db.query.classes.findMany();
+  },
+
   getById: async (id: number) => {
     return await db.query.classes.findFirst({
       where: eq(classes.id, id),
@@ -19,7 +23,10 @@ export const classesQueries = {
     });
   },
 
-  update: async (id: number, classData: Partial<typeof classes.$inferInsert>) => {
+  update: async (
+    id: number,
+    classData: Partial<typeof classes.$inferInsert>,
+  ) => {
     return await db
       .update(classes)
       .set(classData)
@@ -31,4 +38,3 @@ export const classesQueries = {
     return await db.delete(classes).where(eq(classes.id, id)).returning();
   },
 };
-

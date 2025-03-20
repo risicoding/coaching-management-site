@@ -1,156 +1,107 @@
-import { z } from "zod";
-import { adminProcedure, publicProcedure, createTRPCRouter } from "../trpc";
-import { attendance } from "@/server/db/schema";
-import { and, eq, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-
-// ✅ Schema Definitions
-const createAttendanceSchema = z.object({
-  userId: z.number().int(),
-  courseId: z.number().int(),
-  date: z.string().datetime(),
-  status: z.enum(["present", "absent", "late"]).default("present"),
-});
-
-const deleteAttendanceSchema = z.object({
-  userId: z.number().int(),
-  courseId: z.number().int(),
-  date: z.string().datetime(),
-});
-
-const fetchByStudentSchema = z.object({
-  userId: z.number().int(),
-});
-
-const fetchByCourseSchema = z.object({
-  courseId: z.number().int(),
-});
+import { adminProcedure, privateProcedure } from "../trpc";
+import { attendanceQueries } from "@/server/db/queries/attendance";
+import { attendanceInsertSchema } from "@/server/db/schemas/zodSchemas";
+import { createTRPCRouter } from "../trpc";
+import { z } from "zod";
 
 export const attendanceRouter = createTRPCRouter({
-  // ✅ Create Attendance (Admin Only)
   create: adminProcedure
-    .input(createAttendanceSchema)
-    .mutation(async ({ ctx, input }) => {
+    .input(attendanceInsertSchema)
+    .mutation(async ({ input }) => {
       try {
-        const { userId, courseId, date, status } = input;
-
-        await ctx.db.insert(attendance).values({
-          userId,
-          courseId,
-          date: new Date(date), // Ensure date is properly converted to a JS Date object
-          status,
-          createdAt: sql`CURRENT_TIMESTAMP`,
-        });
-
-        return { success: true, message: "Attendance recorded successfully" };
+        return await attendanceQueries.create(input);
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: (error as Error).message,
+          message: "Failed to record attendance",
+          cause: error,
         });
       }
     }),
 
-  // ✅ Remove Attendance (Admin Only)
-  remove: adminProcedure
-    .input(deleteAttendanceSchema)
-    .mutation(async ({ ctx, input }) => {
+  getById: adminProcedure.input(z.number()).query(async ({ input }) => {
+    try {
+      const result = await attendanceQueries.getById(input);
+      if (!result) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Attendance record not found",
+        });
+      }
+      return result;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch attendance record",
+        cause: error,
+      });
+    }
+  }),
+
+  getBySubjectId: privateProcedure
+    .input(z.number())
+    .query(async ({ input }) => {
       try {
-        const { userId, courseId, date } = input;
-
-        const deletedRecords = await ctx.db
-          .delete(attendance)
-          .where(
-            and(
-              eq(attendance.userId, userId),
-              eq(attendance.courseId, courseId),
-              eq(attendance.date, new Date(date))
-            )
-          )
-          .returning();
-
-        if (deletedRecords.length === 0) {
+        const result = await attendanceQueries.getBySubjectId(input);
+        if (!result) {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Attendance record not found",
           });
         }
-
-        return { success: true, message: "Attendance record removed successfully" };
+        return result;
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: (error as Error).message,
+          message: "Failed to fetch attendance records for subject",
+          cause: error,
         });
       }
     }),
 
-  // ✅ Fetch All Attendance Records (Admin Only)
-  fetchAll: adminProcedure.query(async ({ ctx }) => {
+  update: adminProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        data: attendanceInsertSchema.partial(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const updated = await attendanceQueries.update(input.id, input.data);
+        if (!updated) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Attendance record not found",
+          });
+        }
+        return updated;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update attendance record",
+          cause: error,
+        });
+      }
+    }),
+
+  delete: adminProcedure.input(z.number()).mutation(async ({ input }) => {
     try {
-      const attendanceRecords = await ctx.db.select().from(attendance);
-      return attendanceRecords;
+      const deleted = await attendanceQueries.delete(input);
+      if (!deleted) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Attendance record not found",
+        });
+      }
+      return deleted;
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch attendance records",
+        message: "Failed to delete attendance record",
+        cause: error,
       });
     }
   }),
-
-  // ✅ Fetch Attendance by Student ID (Public)
-  fetchByStudentId: publicProcedure
-    .input(fetchByStudentSchema)
-    .query(async ({ ctx, input }) => {
-      try {
-        const { userId } = input;
-
-        const attendanceRecords = await ctx.db
-          .select()
-          .from(attendance)
-          .where(eq(attendance.userId, userId));
-
-        if (attendanceRecords.length === 0) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "No attendance records found for this student",
-          });
-        }
-
-        return attendanceRecords;
-      } catch (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch attendance records for student",
-        });
-      }
-    }),
-
-  // ✅ Fetch Attendance by Course ID (Admin Only)
-  fetchByCourseId: adminProcedure
-    .input(fetchByCourseSchema)
-    .query(async ({ ctx, input }) => {
-      try {
-        const { courseId } = input;
-
-        const attendanceRecords = await ctx.db
-          .select()
-          .from(attendance)
-          .where(eq(attendance.courseId, courseId));
-
-        if (attendanceRecords.length === 0) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "No attendance records found for this course",
-          });
-        }
-
-        return attendanceRecords;
-      } catch (error) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch attendance records for course",
-        });
-      }
-    }),
 });
