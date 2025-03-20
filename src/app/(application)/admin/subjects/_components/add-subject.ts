@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { courseInsertSchema } from "@/server/db/schema";
 import { z } from "zod";
 
 import {

@@ -14,32 +14,19 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronsUpDown, GraduationCap, House, School } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserProfile, useSession } from "@clerk/nextjs";
 import { DialogContent } from "@radix-ui/react-dialog";
 
 // Menu items
-const items = [
-  {
-    title: "Home",
-    url: "/",
-    icon: <House className="size-5" />,
-  },
-  {
-    title: "Courses",
-    url: "/admin/courses",
-    icon: <GraduationCap className="size-5" />,
-  },
-  {
-    title: "Classes",
-    url: "/admin/classes",
-    icon: <School className="size-5" />,
-  },
-];
 
-export function AppSidebar() {
+export function AppSidebar({
+  items,
+}: {
+  items: { title: string; href: string; icon: React.JSX.Element }[];
+}) {
   const { isLoaded, isSignedIn, session } = useSession();
   const sidebar = useSidebar();
   const user = session?.user;
@@ -60,8 +47,8 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton size='md' asChild>
-                    <Link href={item.url}>
+                  <SidebarMenuButton size="md" asChild>
+                    <Link href={item.href}>
                       {item.icon}
                       <span>{item.title}</span>
                     </Link>

@@ -1,13 +1,14 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import React from "react";
-import { AppSidebar } from "./_components/sidebar";
-import Navbar from "./_components/navbar";
+import { AppSidebar } from "@/app/(application)/_components/sidebar";
+import { adminSidebarContent } from "../data";
+import Navbar from "@/app/(marketing)/_components/navbar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="p-4">
       <SidebarProvider>
-        <AppSidebar />
+        <AppSidebar items={adminSidebarContent} />
         <div className="size-full">
           <Navbar />
           {children}
