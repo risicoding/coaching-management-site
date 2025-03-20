@@ -3,7 +3,7 @@ import React from "react";
 import { AppSidebar } from "./_components/sidebar";
 import Navbar from "./_components/navbar";
 
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="p-4">
       <SidebarProvider>
@@ -16,5 +16,4 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     </div>
   );
 };
-
-export default AdminLayout;
+export default Layout;

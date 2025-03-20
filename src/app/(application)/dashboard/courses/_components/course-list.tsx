@@ -17,7 +17,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./ui/sheet";
+} from "@/components/ui/sheet"
 import Link from "next/link";
 
 export const CourseList = () => {
@@ -52,7 +52,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, name, pricing }) => 
     },
   });
   return (
-    <Link href={`/admin/courses/${id}`}>
+    <Link href={`/dashboard/courses/${id}`}>
       <Sheet>
         <ContextMenu>
           <ContextMenuTrigger className="w-full">
