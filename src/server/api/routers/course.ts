@@ -1,8 +1,18 @@
-import { courseInsertSchema, courses } from "@/server/db/schema";
-import { adminProcedure, createTRPCRouter, publicProcedure } from "../trpc";
+import {
+  courseInsertSchema,
+  courses as coursesTable,
+  userCourse,
+  users,
+} from "@/server/db/schema";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  privateProcedure,
+  publicProcedure,
+} from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 // Create a tRPC router for course management
 export const courseRouter = createTRPCRouter({
@@ -14,7 +24,7 @@ export const courseRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         // Insert new course into the database
-        const res = await ctx.db.insert(courses).values(input).returning();
+        const res = await ctx.db.insert(coursesTable).values(input).returning();
         return res;
       } catch (err) {
         // Handle errors gracefully
@@ -38,6 +48,39 @@ export const courseRouter = createTRPCRouter({
         code: "INTERNAL_SERVER_ERROR",
         message: (err as Error).message,
       });
+    }
+  }),
+
+  fetchEnrolled: privateProcedure.query(async ({ ctx }) => {
+    const { userId } = ctx.session;
+    if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+    try {
+      const [userEntry] = await ctx.db
+        .select()
+        .from(users)
+        .where(eq(users.clerkUserId, userId));
+
+      if (!userEntry) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const userCourseEntries = await ctx.db
+        .select()
+        .from(userCourse)
+        .where(eq(userCourse.userId, userEntry.id));
+
+      const courseIds = userCourseEntries.map((entry) => entry.courseId);
+
+      if (!courseIds.length) return [];
+
+      const courses = await ctx.db
+        .select()
+        .from(coursesTable)
+        .where(inArray(coursesTable.id, courseIds));
+
+      return courses;
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
     }
   }),
 
@@ -70,9 +113,9 @@ export const courseRouter = createTRPCRouter({
       try {
         // Update course details in the database
         const res = await ctx.db
-          .update(courses)
+          .update(coursesTable)
           .set(input)
-          .where(eq(courses.id, input.id!));
+          .where(eq(coursesTable.id, input.id!));
         return res;
       } catch (err) {
         throw new TRPCError({
@@ -91,8 +134,8 @@ export const courseRouter = createTRPCRouter({
       try {
         // Delete a course and return the deleted record
         const res = await ctx.db
-          .delete(courses)
-          .where(eq(courses.id, input.id))
+          .delete(coursesTable)
+          .where(eq(coursesTable.id, input.id))
           .returning();
         return res;
       } catch (err) {
@@ -102,5 +145,33 @@ export const courseRouter = createTRPCRouter({
         });
       }
     }),
-});
 
+  enroll: privateProcedure
+    .input(z.object({ courseId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx.session;
+      if (!userId) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      const { courseId } = input;
+
+      try {
+        const user = await ctx.db
+          .select()
+          .from(users)
+          .where(eq(users.clerkUserId, userId));
+        if (user[0] === undefined)
+          throw new TRPCError({ code: "UNAUTHORIZED" });
+
+        const res = await ctx.db
+          .insert(userCourse)
+          .values({ userId: user[0]?.id, courseId });
+        return res;
+      } catch (err) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: (err as Error).message,
+        });
+      }
+    }),
+});
