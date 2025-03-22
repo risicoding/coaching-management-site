@@ -13,7 +13,7 @@ export const attendanceQueries = {
     });
   },
 
-  getBySubjectId:async (id: number) => {
+  getBySubjectId: async (id: number) => {
     return await db.query.attendance.findMany({
       where: eq(attendance.subjectId, id),
     });

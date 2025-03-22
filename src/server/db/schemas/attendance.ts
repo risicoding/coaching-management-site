@@ -3,19 +3,20 @@ import {
   boolean,
   integer,
   pgTable,
+  text,
   timestamp,
   unique,
 } from "drizzle-orm/pg-core";
-import { users } from "./users";
+import { user } from "./auth-schema";
 import { subjects } from "./subjects";
 
 export const attendance = pgTable(
   "attendance",
   {
     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-    userId: integer("user_id")
+    userId: text("user_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: "cascade" }),
     subjectId: integer("subject_id")
       .notNull()
       .references(() => subjects.id, { onDelete: "cascade" }),

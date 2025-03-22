@@ -1,33 +1,51 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import { betterFetch } from "@better-fetch/fetch";
+import type { Session } from "@/auth";
+import { env } from "./env";
 
-export const isPublicRoute = createRouteMatcher([
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/api/webhooks(.*)",
-]);
+const authRoutes = ["/login", "/signup"];
+const passwordRoutes = ["/reset-password", "/forgot-password"];
+const protectedRoutes = ["/dashboard", "/profile", "/settings"];
+const adminRoutes = ["/admin"];
 
-export const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+export default async function authMiddleware(request: NextRequest) {
+  const pathName = request.nextUrl.pathname;
 
-export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
-    await auth.protect();
+  const isAuthRoute = authRoutes.includes(pathName);
+  const isPasswordRoute = passwordRoutes.includes(pathName);
+  const isProtectedRoute = protectedRoutes.includes(pathName);
+  const isAdminRoute = adminRoutes.includes(pathName);
+
+  const { data: session } = await betterFetch<Session>(
+    "/api/auth/get-session",
+    {
+      baseURL: env.NEXT_PUBLIC_BETTER_AUTH_URL,
+      headers: {
+        cookie: request.headers.get("cookie") ?? "",
+      },
+    },
+  );
+
+  console.log("Session: ", session);
+
+  if (!session) {
+    if (isAuthRoute || isPasswordRoute) return NextResponse.next();
+    if (isProtectedRoute || isAdminRoute) {
+      return NextResponse.redirect('/login');
+    }
   }
 
-  if (
-    isAdminRoute(request) &&
-    (await auth()).sessionClaims?.metadata.role !== "admin"
-  ) {
-    const url = new URL("/", request.url);
-    return NextResponse.redirect(url);
+  if (isAuthRoute || isPasswordRoute) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
-});
+
+  if (isAdminRoute && (!session?.user || session.user.role !== "admin")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
-  ],
+  matcher: ["/login", "/signup", "/dashboard", "/admin"],
 };
