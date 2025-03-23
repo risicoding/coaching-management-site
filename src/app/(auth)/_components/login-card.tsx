@@ -26,7 +26,7 @@ const LoginCard = () => {
     authClient.signIn
       .social({
         provider: "google",
-        callbackURL: redirectUrl ?? new URL('/api/onbaord',env.NEXT_PUBLIC_BETTER_AUTH_URL).toString()
+        callbackURL: redirectUrl ?? new URL('/api/onboard',env.NEXT_PUBLIC_BETTER_AUTH_URL).toString()
       })
       .then((data) => logger.log(data))
       .catch((error) => logger.error(error));
