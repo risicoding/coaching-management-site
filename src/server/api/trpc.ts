@@ -11,7 +11,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@/server/db/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth } from "@/auth";
 
 /**
  * 1. CONTEXT
@@ -26,7 +26,10 @@ import { auth } from "@clerk/nextjs/server";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: opts.headers });
+
+  console.log(session);
+
   return {
     db,
     session,
@@ -102,21 +105,28 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 const authMiddleware = t.middleware(async (opts) => {
   const { session } = opts.ctx;
 
-  if (session.userId == null) {
+  if (!session) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  return opts.next({ ctx: { ...opts.ctx, userId: session.userId } });
+  return opts.next({ ctx: { ...opts.ctx, session } });
 });
 
-const adminMiddleware=t.middleware(async(opts)=>{
-  const {session}=opts.ctx
-  if(session.sessionClaims?.metadata.role!=='admin'){
-    throw new TRPCError({code:'UNAUTHORIZED'})
+const adminMiddleware = t.middleware(async (opts) => {
+  const { session } = opts.ctx;
+
+  if (!session) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  return opts.next({ctx:{...opts.ctx}})
-})
+
+  if (session.user.role !== "admin") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return opts.next({ ctx: { ...opts.ctx } });
+});
 
 export const publicProcedure = t.procedure.use(timingMiddleware);
 export const privateProcedure = t.procedure.use(authMiddleware);
-export const adminProcedure=t.procedure.use(authMiddleware).use(adminMiddleware)
+export const adminProcedure = t.procedure
+  .use(authMiddleware)
+  .use(adminMiddleware);

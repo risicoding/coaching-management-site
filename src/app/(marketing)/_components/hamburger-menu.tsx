@@ -13,8 +13,7 @@ const HamburgerMenu = ({ isOpen }: { isOpen: boolean }) => {
         className="h-[1px] w-[20px] bg-black"
       />
       <motion.span
-        animate={{ rotate: isOpen ? -45 : 0, y: isOpen ? "-4px" : 0,
-        }}
+        animate={{ rotate: isOpen ? -45 : 0, y: isOpen ? "-4px" : 0 }}
         transition={{ duration: 0.3 }}
         className="h-[1px] w-[20px] bg-black"
       />

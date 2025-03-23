@@ -13,13 +13,13 @@ export const attendanceQueries = {
     });
   },
 
-  getBySubjectId:async (id: number) => {
+  getBySubjectId: async (id: number) => {
     return await db.query.attendance.findMany({
       where: eq(attendance.subjectId, id),
     });
   },
 
-  getByUserAndSubject: async (userId: number, subjectId: number) => {
+  getByUserAndSubject: async (userId: string, subjectId: number) => {
     return await db.query.attendance.findMany({
       where: (att) => eq(att.userId, userId) && eq(att.subjectId, subjectId),
     });

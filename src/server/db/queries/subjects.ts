@@ -25,7 +25,10 @@ export const subjectsQueries = {
     });
   },
 
-  update: async (id: number, subjectData: Partial<typeof subjects.$inferInsert>) => {
+  update: async (
+    id: number,
+    subjectData: Partial<typeof subjects.$inferInsert>,
+  ) => {
     return await db
       .update(subjects)
       .set(subjectData)
@@ -37,4 +40,3 @@ export const subjectsQueries = {
     return await db.delete(subjects).where(eq(subjects.id, id)).returning();
   },
 };
-

@@ -17,7 +17,6 @@ import Image from "next/image";
 import { ChevronsUpDown } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserProfile, useSession } from "@clerk/nextjs";
 import { DialogContent } from "@radix-ui/react-dialog";
 
 // Menu items
@@ -27,9 +26,7 @@ export function AppSidebar({
 }: {
   items: { title: string; href: string; icon: React.JSX.Element }[];
 }) {
-  const { isLoaded, isSignedIn, session } = useSession();
   const sidebar = useSidebar();
-  const user = session?.user;
 
   return (
     <Sidebar variant="floating" collapsible="icon">
@@ -63,38 +60,38 @@ export function AppSidebar({
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Dialog>
-              <DialogTrigger className="w-full px-2">
-                <div className="flex w-full items-center justify-center gap-4">
-                  <Avatar className="size-6 rounded-lg">
-                    <AvatarImage
-                      src={user?.imageUrl ?? ""}
-                      alt={`${user?.firstName ?? "User"} ${user?.lastName ?? ""}`}
-                    />
-                    <AvatarFallback className="rounded-lg">
-                      {user?.firstName?.slice(0, 2) ?? "CN"}
-                    </AvatarFallback>
-                  </Avatar>
-
-                  {sidebar.state === "expanded" && (
-                    <div className="flex w-full items-center justify-around">
-                      <div className="flex flex-col items-start">
-                        <span className="text-xs">{user?.firstName}</span>
-                        <span className="truncate text-xs">
-                          {user?.lastName}
-                        </span>
-                      </div>
-                      <span className="flex w-full items-center justify-end">
-                        <ChevronsUpDown className="size-4" />
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </DialogTrigger>
-              <DialogContent className="h-screen w-screen">
-                {isLoaded && isSignedIn ? <UserProfile /> : <p>Loading...</p>}
-              </DialogContent>
-            </Dialog>
+            {/* <Dialog> */}
+            {/*   <DialogTrigger className="w-full px-2"> */}
+            {/*     <div className="flex w-full items-center justify-center gap-4"> */}
+            {/*       <Avatar className="size-6 rounded-lg"> */}
+            {/*         <AvatarImage */}
+            {/*           src={user?.imageUrl ?? ""} */}
+            {/*           alt={`${user?.firstName ?? "User"} ${user?.lastName ?? ""}`} */}
+            {/*         /> */}
+            {/*         <AvatarFallback className="rounded-lg"> */}
+            {/*           {user?.firstName?.slice(0, 2) ?? "CN"} */}
+            {/*         </AvatarFallback> */}
+            {/*       </Avatar> */}
+            {/**/}
+            {/*       {sidebar.state === "expanded" && ( */}
+            {/*         <div className="flex w-full items-center justify-around"> */}
+            {/*           <div className="flex flex-col items-start"> */}
+            {/*             <span className="text-xs">{user?.firstName}</span> */}
+            {/*             <span className="truncate text-xs"> */}
+            {/*               {user?.lastName} */}
+            {/*             </span> */}
+            {/*           </div> */}
+            {/*           <span className="flex w-full items-center justify-end"> */}
+            {/*             <ChevronsUpDown className="size-4" /> */}
+            {/*           </span> */}
+            {/*         </div> */}
+            {/*       )} */}
+            {/*     </div> */}
+            {/*   </DialogTrigger> */}
+            {/*   <DialogContent className="h-screen w-screen"> */}
+            {/*     {isLoaded && isSignedIn ? <UserProfile /> : <p>Loading...</p>} */}
+            {/*   </DialogContent> */}
+            {/* </Dialog> */}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

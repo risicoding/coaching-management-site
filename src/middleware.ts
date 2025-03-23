@@ -1,33 +1,65 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-export const isPublicRoute = createRouteMatcher([
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/api/webhooks(.*)",
-]);
+import { betterFetch } from "@better-fetch/fetch";
+import type { Session } from "@/auth";
 
-export const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+import { env } from "./env";
+import {
+  authRoutes,
+  adminRoutes,
+  passwordRoutes,
+  protectedRoutes,
+  matchRoute,
+} from "./lib/route";
 
-export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
-    await auth.protect();
+export default async function authMiddleware(request: NextRequest) {
+  const pathName = request.nextUrl.pathname;
+
+  const isAuthRoute = matchRoute(pathName, authRoutes);
+  const isPasswordRoute = matchRoute(pathName, passwordRoutes);
+  const isProtectedRoute = matchRoute(pathName, protectedRoutes);
+  const isAdminRoute = matchRoute(pathName, adminRoutes);
+
+  const { data: session } = await betterFetch<Session>(
+    "/api/auth/get-session",
+    {
+      baseURL: env.NEXT_PUBLIC_BETTER_AUTH_URL,
+      headers: {
+        cookie: request.headers.get("cookie") ?? "",
+      },
+    },
+  );
+
+  if (!session) {
+    if (isAuthRoute || isPasswordRoute) return NextResponse.next();
+    if (isProtectedRoute || isAdminRoute) {
+      const redirectUrl = new URL("/login", request.url);
+
+      redirectUrl.searchParams.set(
+        "redirect_url",
+        new URL(pathName, env.NEXT_PUBLIC_BETTER_AUTH_URL).toString(),
+      );
+
+      return NextResponse.redirect(redirectUrl);
+    }
   }
 
-  if (
-    isAdminRoute(request) &&
-    (await auth()).sessionClaims?.metadata.role !== "admin"
-  ) {
-    const url = new URL("/", request.url);
-    return NextResponse.redirect(url);
+  if (isAuthRoute || isPasswordRoute) {
+    return NextResponse.redirect(
+      new URL(
+        session?.user.role === "admin" ? "/admin" : "/dashboard",
+        request.url,
+      ),
+    );
   }
-});
+
+  if (isAdminRoute && (!session?.user || session.user.role !== "admin")) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
-  ],
+  matcher: ["/login", "/signup", "/dashboard/:path*", "/admin/:path*"],
 };

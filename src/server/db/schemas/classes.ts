@@ -18,10 +18,9 @@ export const classes = pgTable(
   },
   (t) => ({
     uuidIndex: index("classes_uuid_index").on(t.uuid),
-  })
+  }),
 );
 
 export const classesRelations = relations(classes, ({ many }) => ({
   subjects: many(subjects),
 }));
-

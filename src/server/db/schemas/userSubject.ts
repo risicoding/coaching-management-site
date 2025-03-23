@@ -1,15 +1,15 @@
 import { sql } from "drizzle-orm";
-import { integer, pgTable, primaryKey, timestamp } from "drizzle-orm/pg-core";
-import { users } from "./users";
+import { integer, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
+import { user } from "./auth-schema";
 import { subjects } from "./subjects";
 import { relations } from "drizzle-orm";
 
 export const userSubject = pgTable(
   "user_subject",
   {
-    userId: integer("user_id")
+    userId: text("user_id")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: "cascade" }),
     subjectId: integer("subject_id")
       .notNull()
       .references(() => subjects.id, { onDelete: "cascade" }),
@@ -27,8 +27,8 @@ export const usersSubjectRelations = relations(userSubject, ({ one }) => ({
     fields: [userSubject.subjectId],
     references: [subjects.id],
   }),
-  user: one(users, {
+  user: one(user, {
     fields: [userSubject.userId],
-    references: [users.id],
+    references: [user.id],
   }),
 }));
