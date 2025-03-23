@@ -11,17 +11,26 @@ import { FaGoogle } from "react-icons/fa";
 import SignupForm from "./signup-form";
 import Link from "next/link";
 import { authClient } from "@/auth/client";
+import { useSearchParams } from "next/navigation";
+import { env } from "@/env";
 
 const SignupCard = () => {
+  const searchParams = useSearchParams();
+
+  const redirectUrl = searchParams.get("redirect_url");
+
   const handleGoogleSignIn = () => {
     authClient.signIn
       .social({
         provider: "google",
-        callbackURL: "/dashboard",
+        callbackURL:
+          redirectUrl ??
+          new URL("/api/onbaord", env.NEXT_PUBLIC_BETTER_AUTH_URL).toString(),
       })
       .then((data) => console.log(data))
       .catch((error) => console.error(error));
   };
+
   return (
     <Card>
       <CardHeader className="text-center">

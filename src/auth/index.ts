@@ -4,6 +4,7 @@ import { db } from "@/server/db/db";
 import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { env } from "@/env";
+import { logger } from "@/lib/logger";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {

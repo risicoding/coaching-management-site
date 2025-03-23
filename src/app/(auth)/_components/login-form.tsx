@@ -13,13 +13,13 @@ import {
 } from "@/components/ui/form";
 import { authClient } from "@/auth/client";
 import { Loader } from "lucide-react";
-import {  useSearchParams ,useRouter} from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { logger } from "@/lib/logger";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
     .string()
-    .min(6, { message: "Password must be at least 6 characters" }),
 });
 
 const LoginForm = () => {
@@ -33,26 +33,27 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    logger.log('Form data',data);
     const { data: signInData, error } = await authClient.signIn.email({
       email: data.email,
       password: data.password,
     });
 
     if (error) {
-      console.error(error);
+      logger.error(error);
       form.setError("email", { type: "validate", message: error.message });
       form.setError("password", { type: "validate", message: error.message });
       return;
     }
 
-    console.log(signInData);
+    logger.log(signInData);
 
     if (redirectUrl) {
       router.push(redirectUrl);
     }
 
-    const session = await authClient.getSession();
-    console.log(session);
+    const { data: session } = await authClient.getSession();
+    router.push(session?.user.role === "/admin" ? "/admin" : "/dashboard");
   };
 
   return (

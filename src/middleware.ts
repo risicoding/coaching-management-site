@@ -34,6 +34,7 @@ export default async function authMiddleware(request: NextRequest) {
     if (isAuthRoute || isPasswordRoute) return NextResponse.next();
     if (isProtectedRoute || isAdminRoute) {
       const redirectUrl = new URL("/login", request.url);
+
       redirectUrl.searchParams.set(
         "redirect_url",
         new URL(pathName, env.NEXT_PUBLIC_BETTER_AUTH_URL).toString(),

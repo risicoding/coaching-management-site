@@ -11,7 +11,7 @@ const Page = () => {
 
   useEffect(() => {
     authClient.getSession().then(({ data }) => setSession(data));
-  });
+  },[]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6">

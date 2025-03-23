@@ -14,6 +14,7 @@ import {
 import { authClient } from "@/auth/client";
 import { Loader } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { logger } from "@/lib/logger";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -34,6 +35,7 @@ const SignupForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    logger.log(data)
     const { data: signUpData, error } = await authClient.signUp.email({
       name: data.name,
       email: data.email,
@@ -41,7 +43,7 @@ const SignupForm = () => {
     });
 
     if (error) {
-      console.error(error);
+      logger.error(error)
       form.setError("name", {
         type: "required",
         message: error.message,
@@ -56,14 +58,15 @@ const SignupForm = () => {
       });
       return;
     }
-    console.log(signUpData);
+
+    logger.log(signUpData)
 
     if (redirectUrl) {
       router.push(redirectUrl);
     }
 
-    const session = await authClient.getSession();
-    console.log(session);
+    const { data: session } = await authClient.getSession();
+    router.push(session?.user.role === "/admin" ? "/admin" : "/dashboard");
   };
 
   return (

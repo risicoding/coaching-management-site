@@ -14,6 +14,8 @@ import LoginForm from "./login-form";
 import Link from "next/link";
 import { authClient } from "@/auth/client";
 import { useSearchParams } from "next/navigation";
+import { env } from "@/env";
+import { logger } from "@/lib/logger";
 
 const LoginCard = () => {
   const searchParams = useSearchParams();
@@ -24,10 +26,10 @@ const LoginCard = () => {
     authClient.signIn
       .social({
         provider: "google",
-        callbackURL: redirectUrl!,
+        callbackURL: redirectUrl ?? new URL('/api/onbaord',env.NEXT_PUBLIC_BETTER_AUTH_URL).toString()
       })
-      .then((data) => console.log(data))
-      .catch((error) => console.error(error));
+      .then((data) => logger.log(data))
+      .catch((error) => logger.error(error));
   };
 
   return (
