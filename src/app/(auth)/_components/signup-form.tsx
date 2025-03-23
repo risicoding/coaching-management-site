@@ -12,6 +12,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { authClient } from "@/auth/client";
+import { Loader } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -22,6 +24,10 @@ const formSchema = z.object({
 });
 
 const SignupForm = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const redirectUrl = searchParams.get("redirect_url");
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", email: "", password: "" },
@@ -36,21 +42,28 @@ const SignupForm = () => {
 
     if (error) {
       console.error(error);
-       form.setError("name", {
+      form.setError("name", {
         type: "required",
         message: error.message,
       });
-       form.setError("email", {
+      form.setError("email", {
         type: "required",
         message: error.message,
       });
-       form.setError("password", {
+      form.setError("password", {
         type: "required",
         message: error.message,
       });
-      return
+      return;
     }
     console.log(signUpData);
+
+    if (redirectUrl) {
+      router.push(redirectUrl);
+    }
+
+    const session = await authClient.getSession();
+    console.log(session);
   };
 
   return (
@@ -63,7 +76,12 @@ const SignupForm = () => {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="John Doe" {...field} />
+                <Input
+                  type="text"
+                  placeholder="John Doe"
+                  {...field}
+                  disabled={form.formState.isSubmitting}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -77,7 +95,12 @@ const SignupForm = () => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="you@example.com" {...field} />
+                <Input
+                  type="email"
+                  placeholder="you@example.com"
+                  {...field}
+                  disabled={form.formState.isSubmitting}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -98,8 +121,16 @@ const SignupForm = () => {
           )}
         />
 
-        <Button type="submit" className="w-full">
-          Sign Up
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? (
+            <Loader className="animate-spin" />
+          ) : (
+            "Login"
+          )}
         </Button>
       </form>
     </Form>

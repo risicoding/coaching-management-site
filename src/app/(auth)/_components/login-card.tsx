@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -10,8 +12,24 @@ import { Button } from "@/components/ui/button";
 import { FaGoogle } from "react-icons/fa";
 import LoginForm from "./login-form";
 import Link from "next/link";
+import { authClient } from "@/auth/client";
+import { useSearchParams } from "next/navigation";
 
 const LoginCard = () => {
+  const searchParams = useSearchParams();
+
+  const redirectUrl = searchParams.get("redirect_url");
+
+  const handleGoogleSignIn = () => {
+    authClient.signIn
+      .social({
+        provider: "google",
+        callbackURL: redirectUrl!,
+      })
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
+  };
+
   return (
     <Card>
       <CardHeader className="text-center">
@@ -20,7 +38,13 @@ const LoginCard = () => {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <Button variant="outline" className="flex w-full items-center gap-2">
+        <Button
+          variant="outline"
+          className="flex w-full items-center gap-2"
+          onClick={() => {
+            handleGoogleSignIn();
+          }}
+        >
           <FaGoogle className="text-lg" />
           Login with Google
         </Button>

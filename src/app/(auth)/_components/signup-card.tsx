@@ -10,17 +10,31 @@ import { Button } from "@/components/ui/button";
 import { FaGoogle } from "react-icons/fa";
 import SignupForm from "./signup-form";
 import Link from "next/link";
+import { authClient } from "@/auth/client";
 
 const SignupCard = () => {
+  const handleGoogleSignIn = () => {
+    authClient.signIn
+      .social({
+        provider: "google",
+        callbackURL: "/dashboard",
+      })
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
+  };
   return (
-    <Card >
+    <Card>
       <CardHeader className="text-center">
         <CardTitle>Create an Account</CardTitle>
         <CardDescription>Use your google account or email</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <Button variant="outline" className="flex w-full items-center gap-2">
+        <Button
+          variant="outline"
+          className="flex w-full items-center gap-2"
+          onClick={() => handleGoogleSignIn()}
+        >
           <FaGoogle className="text-lg" />
           Sign up with Google
         </Button>
@@ -34,10 +48,12 @@ const SignupCard = () => {
         <SignupForm />
       </CardContent>
 
-      <CardFooter className="text-center flex items-center justify-center text-sm text-muted-foreground">
+      <CardFooter className="flex items-center justify-center text-center text-sm text-muted-foreground">
         <span>Already have an account?</span>
         <span>
-          <Link href='/login' className="ml-1 text-primary hover:underline">Login</Link>
+          <Link href="/login" className="ml-1 text-primary hover:underline">
+            Login
+          </Link>
         </span>
       </CardFooter>
     </Card>

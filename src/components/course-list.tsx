@@ -9,7 +9,6 @@ import {
   ContextMenuItem,
 } from "@/components/ui/context-menu";
 import { FaTrash, FaPen, FaLocationArrow } from "react-icons/fa";
-import { EditCourseForm } from "@/app/(application)/admin/courses/_components/edit-course";
 import {
   Sheet,
   SheetContent,
@@ -21,18 +20,18 @@ import {
 import Link from "next/link";
 
 export const CourseList = () => {
-  const courses = api.course.fetchAll.useQuery();
+  // const courses = api.subjects.getById.useQuery(id);
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      {courses?.data?.map((course) => (
-        <CourseCard
-          id={course.id}
-          key={course.id}
-          name={course.name}
-          pricing={course.pricing}
-          offerings={[""]}
-        />
-      ))}
+    {/*   {courses?.data?.map((course) => ( */}
+    {/*     <CourseCard */}
+    {/*       id={course.id} */}
+    {/*       key={course.id} */}
+    {/*       name={course.name} */}
+    {/*       pricing={course.pricing} */}
+    {/*       offerings={[""]} */}
+    {/*     /> */}
+    {/*   ))} */}
     </div>
   );
 };
@@ -44,13 +43,19 @@ interface CourseCardProps {
   offerings: string[];
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ id, name, pricing }) => {
+export const CourseCard: React.FC<CourseCardProps> = ({
+  id,
+  name,
+  pricing,
+}) => {
   const utils = api.useUtils();
-  const { mutate: deleteCourse } = api.course.delete.useMutation({
+
+  const { mutate: deleteCourse } = api.subjects.delete.useMutation({
     onSuccess: async () => {
-      utils.course.fetchAll.invalidate();
+      utils.subjects.getById.invalidate();
     },
   });
+
   return (
     <Link href={`/admin/courses/${id}`}>
       <Sheet>
@@ -71,7 +76,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, name, pricing }) => 
                 <FaPen className="mr-2" /> Edit
               </ContextMenuItem>
             </SheetTrigger>
-            <ContextMenuItem onClick={() => deleteCourse({ id })}>
+            <ContextMenuItem onClick={() => deleteCourse(id)}>
               <FaTrash className="mr-2" /> Delete
             </ContextMenuItem>
             <ContextMenuItem>
@@ -86,7 +91,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ id, name, pricing }) => 
               Fill in the course details below.
             </SheetDescription>
           </SheetHeader>
-          <EditCourseForm id={id} />
+          {/* <EditCourseForm id={id} /> */}
         </SheetContent>
       </Sheet>
     </Link>

@@ -2,7 +2,6 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import React from "react";
 import { AppSidebar } from "@/app/(application)/_components/sidebar";
 import { adminSidebarContent } from "../data";
-import Navbar from "@/app/(marketing)/_components/navbar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -10,7 +9,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <SidebarProvider>
         <AppSidebar items={adminSidebarContent} />
         <div className="size-full">
-          <Navbar />
           {children}
         </div>
       </SidebarProvider>

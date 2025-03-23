@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { authClient } from "@/auth/client";
 import { Loader } from "lucide-react";
+import {  useSearchParams ,useRouter} from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -22,6 +23,10 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const redirectUrl = searchParams.get("redirect_url");
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "" },
@@ -41,6 +46,13 @@ const LoginForm = () => {
     }
 
     console.log(signInData);
+
+    if (redirectUrl) {
+      router.push(redirectUrl);
+    }
+
+    const session = await authClient.getSession();
+    console.log(session);
   };
 
   return (

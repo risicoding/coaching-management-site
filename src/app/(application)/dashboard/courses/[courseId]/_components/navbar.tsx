@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 
 const Navbar = ({name,id}:{name:string,id:number}) => {
 
-  const { mutateAsync } = api.course.enroll.useMutation();
+  // const { mutateAsync } = api.course.enroll.useMutation();
 
   const handleEnroll = async () => {
-    await mutateAsync({ courseId: id });
+    console.log('enroll,')
   };
 
   return <div>

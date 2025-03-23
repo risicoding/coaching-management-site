@@ -11,7 +11,7 @@ const Page = () => {
 
   const [selected, setSelected] = useState("Home");
 
-  const course = api.course.fetchById.useQuery({ id: Number(courseId) });
+  // const course = api.course.fetchById.useQuery({ id: Number(courseId) });
 
   return (
     <div className="space-y-2 py-6">

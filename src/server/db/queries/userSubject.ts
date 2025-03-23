@@ -1,14 +1,14 @@
 import { db } from "@/server/db/db";
 import { userSubject } from "@/server/db/schemas/userSubject";
 import { eq, and } from "drizzle-orm";
-import { users } from "../schemas";
+import { user } from "../schemas";
 
 export const userSubjectQueries = {
   enrollUser: async (userSubjectData: typeof userSubject.$inferInsert) => {
     return await db.insert(userSubject).values(userSubjectData).returning();
   },
 
-  getByUserId: async (userId: number) => {
+  getByUserId: async (userId: string) => {
     return await db.query.userSubject.findMany({
       where: eq(userSubject.userId, userId),
     });
@@ -20,7 +20,7 @@ export const userSubjectQueries = {
     });
   },
 
-  getEnrollment: async (userId: number, subjectId: number) => {
+  getEnrollment: async (userId: string, subjectId: number) => {
     return await db.query.userSubject.findFirst({
       where: and(
         eq(userSubject.userId, userId),
@@ -33,11 +33,11 @@ export const userSubjectQueries = {
     return await db
       .select()
       .from(userSubject)
-      .innerJoin(users, eq(userSubject.userId, users.id))
+      .innerJoin(user, eq(userSubject.userId, user.id))
       .where(eq(userSubject.subjectId, subjectId));
   },
 
-  unenrollUser: async (userId: number, subjectId: number) => {
+  unenrollUser: async (userId: string, subjectId: number) => {
     return await db
       .delete(userSubject)
       .where(
