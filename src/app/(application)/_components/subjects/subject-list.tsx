@@ -1,5 +1,4 @@
-import { AddSubjectButton } from "../../admin/_components/add-subject-button";
-import { SubjectCard, SubjectCardProps } from "./subject-card";
+import { SubjectCard,type SubjectCardProps } from "./subject-card";
 
 export const SubjectsList = ({
   subjects,
@@ -18,7 +17,6 @@ export const SubjectsList = ({
             time={subject.time}
           />
         ))}
-       <AddSubjectButton/> 
       </div>
     </div>
   );
