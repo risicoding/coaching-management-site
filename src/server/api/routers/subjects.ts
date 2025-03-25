@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { adminProcedure } from "../trpc";
+import { adminProcedure, privateProcedure } from "../trpc";
 import { subjectsQueries } from "@/server/db/queries/subjects";
 import { subjectInsertSchema } from "@/server/db/schemas/zodSchemas";
 import { createTRPCRouter } from "../trpc";
@@ -48,6 +48,22 @@ export const subjectsRouter = createTRPCRouter({
           message: "Subject not found",
         });
       }
+      return result;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch subject by UUID",
+        cause: error,
+      });
+    }
+  }),
+
+  getEnrolled: privateProcedure.query(async ({ ctx }) => {
+    const {
+      user: { id },
+    } = ctx.session;
+    try {
+      const result = await subjectsQueries.getEnrolled(id);
       return result;
     } catch (error) {
       throw new TRPCError({

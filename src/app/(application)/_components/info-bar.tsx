@@ -17,18 +17,15 @@ const InfoBar = ({
   onButtonClick,
 }: InfoBarProps) => {
   return (
-    <div className="flex items-center justify-between rounded-lg bg-gray-800 p-4 text-white shadow-md">
+    <div className="flex items-center justify-between rounded-lg">
       {/* Left Section - Icon and Header */}
       <div className="flex items-center gap-2">
-        <Icon className="h-6 w-6 text-blue-400" />
+        <Icon className="h-6 w-6" />
         <span className="text-lg font-medium">{header}</span>
       </div>
 
       {/* Right Section - Button */}
-      <Button
-        onClick={onButtonClick}
-        className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600"
-      >
+      <Button onClick={onButtonClick}>
         {ButtonIcon && <ButtonIcon className="h-5 w-5" />}
         {buttonText}
       </Button>

@@ -6,13 +6,28 @@ import { createTRPCRouter } from "../trpc";
 import { z } from "zod";
 
 export const classesRouter = createTRPCRouter({
-  create: adminProcedure.input(classInsertSchema).mutation(async ({ input }) => {
+  create: adminProcedure
+    .input(classInsertSchema)
+    .mutation(async ({ input }) => {
+      try {
+        return await classesQueries.create(input);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create class",
+          cause: error,
+        });
+      }
+    }),
+
+  getAll: adminProcedure.query(async () => {
     try {
-      return await classesQueries.create(input);
+      const result = await classesQueries.getAll();
+      return result;
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to create class",
+        message: "Failed to fetch class by ID",
         cause: error,
       });
     }
@@ -55,13 +70,16 @@ export const classesRouter = createTRPCRouter({
       z.object({
         id: z.number(),
         data: classInsertSchema.partial(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
       try {
         const updated = await classesQueries.update(input.id, input.data);
         if (!updated) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "Class not found" });
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Class not found",
+          });
         }
         return updated;
       } catch (error) {
@@ -89,4 +107,3 @@ export const classesRouter = createTRPCRouter({
     }
   }),
 });
-

@@ -14,12 +14,6 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronsUpDown } from "lucide-react";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DialogContent } from "@radix-ui/react-dialog";
-
-// Menu items
 
 export function AppSidebar({
   items,
@@ -33,7 +27,7 @@ export function AppSidebar({
       <SidebarHeader className="flex gap-4 px-4 py-4">
         <div className="flex items-center gap-2">
           <Image src="/logo.svg" width={30} height={30} alt="logo" />
-          <p className="truncate text-xl font-bold">Urban Classes</p>
+          <p className="truncate text-lg">Urban Classes</p>
         </div>
       </SidebarHeader>
 
