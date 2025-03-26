@@ -1,11 +1,11 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
-  integer,
   pgTable,
   text,
   timestamp,
   unique,
+  uuid,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 import { subjects } from "./subjects";
@@ -13,11 +13,11 @@ import { subjects } from "./subjects";
 export const attendance = pgTable(
   "attendance",
   {
-    id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+    id:uuid('id').primaryKey().defaultRandom(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    subjectId: integer("subject_id")
+    subjectId: uuid("subject_id")
       .notNull()
       .references(() => subjects.id, { onDelete: "cascade" }),
     date: timestamp("date", { withTimezone: true }).notNull(),

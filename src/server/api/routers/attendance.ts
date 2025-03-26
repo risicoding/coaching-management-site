@@ -20,7 +20,7 @@ export const attendanceRouter = createTRPCRouter({
       }
     }),
 
-  getById: adminProcedure.input(z.number()).query(async ({ input }) => {
+  getById: adminProcedure.input(z.string()).query(async ({ input }) => {
     try {
       const result = await attendanceQueries.getById(input);
       if (!result) {
@@ -40,7 +40,7 @@ export const attendanceRouter = createTRPCRouter({
   }),
 
   getBySubjectId: privateProcedure
-    .input(z.number())
+    .input(z.string())
     .query(async ({ input }) => {
       try {
         const result = await attendanceQueries.getBySubjectId(input);
@@ -63,7 +63,7 @@ export const attendanceRouter = createTRPCRouter({
   update: adminProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.string(),
         data: attendanceInsertSchema.partial(),
       }),
     )
@@ -86,7 +86,7 @@ export const attendanceRouter = createTRPCRouter({
       }
     }),
 
-  delete: adminProcedure.input(z.number()).mutation(async ({ input }) => {
+  delete: adminProcedure.input(z.string()).mutation(async ({ input }) => {
     try {
       const deleted = await attendanceQueries.delete(input);
       if (!deleted) {

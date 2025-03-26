@@ -33,7 +33,7 @@ export const classesRouter = createTRPCRouter({
     }
   }),
 
-  getById: adminProcedure.input(z.number()).query(async ({ input }) => {
+  getById: adminProcedure.input(z.string()).query(async ({ input }) => {
     try {
       const result = await classesQueries.getById(input);
       if (!result) {
@@ -49,26 +49,11 @@ export const classesRouter = createTRPCRouter({
     }
   }),
 
-  getByUUID: adminProcedure.input(z.string()).query(async ({ input }) => {
-    try {
-      const result = await classesQueries.getByUUID(input);
-      if (!result) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Class not found" });
-      }
-      return result;
-    } catch (error) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch class by UUID",
-        cause: error,
-      });
-    }
-  }),
 
   update: adminProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.string(),
         data: classInsertSchema.partial(),
       }),
     )
@@ -91,7 +76,7 @@ export const classesRouter = createTRPCRouter({
       }
     }),
 
-  delete: adminProcedure.input(z.number()).mutation(async ({ input }) => {
+  delete: adminProcedure.input(z.string()).mutation(async ({ input }) => {
     try {
       const deleted = await classesQueries.delete(input);
       if (!deleted) {

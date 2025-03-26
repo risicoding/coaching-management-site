@@ -4,41 +4,36 @@ import { eq, and } from "drizzle-orm";
 import { user } from "../schemas";
 
 export const userSubjectQueries = {
-  enrollUser: async (userSubjectData: typeof userSubject.$inferInsert) => {
-    return await db.insert(userSubject).values(userSubjectData).returning();
-  },
+  enrollUser: (userSubjectData: typeof userSubject.$inferInsert) =>
+    db.insert(userSubject).values(userSubjectData).returning(),
 
-  getByUserId: async (userId: string) => {
-    return await db.query.userSubject.findMany({
+  getByUserId: (userId: string) =>
+    db.query.userSubject.findMany({
       where: eq(userSubject.userId, userId),
-    });
-  },
+    }),
 
-  getBySubjectId: async (subjectId: number) => {
-    return await db.query.userSubject.findMany({
+  getBySubjectId: (subjectId: string) =>
+    db.query.userSubject.findMany({
       where: eq(userSubject.subjectId, subjectId),
-    });
-  },
+    }),
 
-  getEnrollment: async (userId: string, subjectId: number) => {
-    return await db.query.userSubject.findFirst({
+  getEnrollment: (userId: string, subjectId: string) =>
+    db.query.userSubject.findFirst({
       where: and(
         eq(userSubject.userId, userId),
         eq(userSubject.subjectId, subjectId),
       ),
-    });
-  },
+    }),
 
-  getUsersInSubject: async (subjectId: number) => {
-    return await db
+  getUsersInSubject: (subjectId: string) =>
+    db
       .select()
       .from(userSubject)
       .innerJoin(user, eq(userSubject.userId, user.id))
-      .where(eq(userSubject.subjectId, subjectId));
-  },
+      .where(eq(userSubject.subjectId, subjectId)),
 
-  unenrollUser: async (userId: string, subjectId: number) => {
-    return await db
+  unenrollUser: (userId: string, subjectId: string) =>
+    db
       .delete(userSubject)
       .where(
         and(
@@ -46,6 +41,5 @@ export const userSubjectQueries = {
           eq(userSubject.subjectId, subjectId),
         ),
       )
-      .returning();
-  },
+      .returning(),
 };

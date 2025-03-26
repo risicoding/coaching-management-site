@@ -20,7 +20,7 @@ export const subjectsRouter = createTRPCRouter({
       }
     }),
 
-  getById: adminProcedure.input(z.number()).query(async ({ input }) => {
+  getById: adminProcedure.input(z.string()).query(async ({ input }) => {
     try {
       const result = await subjectsQueries.getById(input);
       if (!result) {
@@ -34,25 +34,6 @@ export const subjectsRouter = createTRPCRouter({
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to fetch subject by ID",
-        cause: error,
-      });
-    }
-  }),
-
-  getByUUID: adminProcedure.input(z.string()).query(async ({ input }) => {
-    try {
-      const result = await subjectsQueries.getByUUID(input);
-      if (!result) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Subject not found",
-        });
-      }
-      return result;
-    } catch (error) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch subject by UUID",
         cause: error,
       });
     }
@@ -74,7 +55,7 @@ export const subjectsRouter = createTRPCRouter({
     }
   }),
 
-  getByClassId: adminProcedure.input(z.number()).query(async ({ input }) => {
+  getByClassId: adminProcedure.input(z.string()).query(async ({ input }) => {
     try {
       const result = await subjectsQueries.getByClassId(input);
       return result;
@@ -90,7 +71,7 @@ export const subjectsRouter = createTRPCRouter({
   update: adminProcedure
     .input(
       z.object({
-        id: z.number(),
+        id: z.string(),
         data: subjectInsertSchema.partial(),
       }),
     )
@@ -113,7 +94,7 @@ export const subjectsRouter = createTRPCRouter({
       }
     }),
 
-  delete: adminProcedure.input(z.number()).mutation(async ({ input }) => {
+  delete: adminProcedure.input(z.string()).mutation(async ({ input }) => {
     try {
       const deleted = await subjectsQueries.delete(input);
       if (!deleted) {

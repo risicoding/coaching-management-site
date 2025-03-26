@@ -6,8 +6,7 @@ import { subjects } from "./subjects";
 export const classes = pgTable(
   "classes",
   {
-    id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-    uuid: uuid("uuid").defaultRandom(),
+    id: uuid("uuid").primaryKey().defaultRandom(),
     classNumber: integer("class_number").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
@@ -15,10 +14,7 @@ export const classes = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
-  },
-  (t) => ({
-    uuidIndex: index("classes_uuid_index").on(t.uuid),
-  }),
+  }
 );
 
 export const classesRelations = relations(classes, ({ many }) => ({

@@ -3,38 +3,19 @@ import { classes } from "@/server/db/schemas/classes";
 import { eq } from "drizzle-orm";
 
 export const classesQueries = {
-  create: async (classData: typeof classes.$inferInsert) => {
-    return await db.insert(classes).values(classData).returning();
-  },
+  create: (classData: typeof classes.$inferInsert) =>
+    db.insert(classes).values(classData).returning(),
 
-  getAll: async () => {
-    return await db.query.classes.findMany();
-  },
+  getAll: () => db.query.classes.findMany(),
 
-  getById: async (id: number) => {
-    return await db.query.classes.findFirst({
+  getById: (id: string) =>
+    db.query.classes.findFirst({
       where: eq(classes.id, id),
-    });
-  },
+    }),
 
-  getByUUID: async (uuid: string) => {
-    return await db.query.classes.findFirst({
-      where: eq(classes.uuid, uuid),
-    });
-  },
+  update: (id: string, classData: Partial<typeof classes.$inferInsert>) =>
+    db.update(classes).set(classData).where(eq(classes.id, id)).returning(),
 
-  update: async (
-    id: number,
-    classData: Partial<typeof classes.$inferInsert>,
-  ) => {
-    return await db
-      .update(classes)
-      .set(classData)
-      .where(eq(classes.id, id))
-      .returning();
-  },
-
-  delete: async (id: number) => {
-    return await db.delete(classes).where(eq(classes.id, id)).returning();
-  },
+  delete: (id: string) =>
+    db.delete(classes).where(eq(classes.id, id)).returning(),
 };
