@@ -1,30 +1,41 @@
-"use client"
+"use client";
 
-import React from "react"
+import React from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordion";
+import { Ellipsis } from "lucide-react";
+import { ClassDropdown } from "./class-dropdown";
 
 interface CollapsibleClassProps {
-  classNo: number
-  children: React.ReactNode
+  id: string;
+  classNo: number;
+  children: React.ReactNode;
 }
 
-const CollapsibleClass: React.FC<CollapsibleClassProps> = ({ classNo, children }) => {
+const CollapsibleClass: React.FC<CollapsibleClassProps> = ({
+  id,
+  classNo,
+  children,
+}) => {
   return (
-    <Accordion type="single"  collapsible className="w-full border rounded-md">
+    <Accordion type="single" collapsible className="w-full rounded-md border">
       <AccordionItem value={`class-${classNo}`}>
-        <AccordionTrigger className="p-4 text-left">
+        <AccordionTrigger className="group p-4 text-left">
           Class {classNo}
+          <div className="ml-auto mr-4 text-neutral-500">
+            <ClassDropdown id={id} />
+          </div>
         </AccordionTrigger>
-        <AccordionContent className="p-4 space-y-2">{children}</AccordionContent>
+        <AccordionContent className="space-y-4 p-4">
+          {children}
+        </AccordionContent>
       </AccordionItem>
     </Accordion>
-  )
-}
+  );
+};
 
-export default CollapsibleClass
-
+export default CollapsibleClass;

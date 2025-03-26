@@ -5,28 +5,37 @@ import { Plus, School } from "lucide-react";
 import { InforBarDialog } from "../../_components/info-bar-dialog";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { api } from "@/trpc/react";
+import { SubjectCard } from "../../_components/subjects/subject-card";
 
 const Page = () => {
   return (
     <div className="space-y-4">
-      <SubjectsInfoBar/>
+      <SubjectsInfoBar />
     </div>
   );
 };
 
 const SubjectsInfoBar = () => {
+  const { data } = api.subjects.getAll.useQuery();
+  const utils = api.useUtils();
+
   return (
-    <InforBarDialog header="Classes" Icon={School}>
-      <Dialog>
-        <DialogTrigger>
-          <Button>
-            Add Class <Plus />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="w-3/4">
-        </DialogContent>
-      </Dialog>
-    </InforBarDialog>
+    <div>
+      {data?.map((itx) => (
+        <SubjectCard
+          key={itx.id}
+          name={itx.name}
+          id={itx.id}
+          time={itx.name}
+          classNo={
+            utils.classes.getAll
+              .getData()
+              ?.find((item) => item.id === itx.classId)?.classNumber ?? null
+          }
+        />
+      ))}
+    </div>
   );
 };
 

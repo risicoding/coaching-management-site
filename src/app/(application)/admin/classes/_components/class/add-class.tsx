@@ -13,15 +13,23 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import React from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import React, { useRef } from "react";
 import { Loader } from "lucide-react";
+import { api } from "@/trpc/react";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 export const AddClassDialog = ({ children }: { children: React.ReactNode }) => {
   return (
     <Dialog>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="w-3/4">
+        <DialogTitle>Add new class</DialogTitle>
         <AddClassForm />
       </DialogContent>
     </Dialog>
@@ -37,12 +45,21 @@ const formSchema = z.object({
 });
 
 const AddClassForm = () => {
+  const ref = useRef<HTMLButtonElement | null>(null);
+  const utils = api.useUtils();
+  const { mutateAsync } = api.classes.create.useMutation({
+    onSuccess: async () => {
+      void utils.classes.getAll.invalidate();
+      ref.current?.click();
+    },
+  });
   const form = useForm({
     resolver: zodResolver(formSchema),
+    defaultValues: { classNo: undefined },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log("Class added:", data);
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    await mutateAsync({ classNumber: data.classNo });
   };
 
   return (
@@ -72,6 +89,7 @@ const AddClassForm = () => {
             "Add Class"
           )}
         </Button>
+        <DialogClose className="hidden" ref={ref} />
       </form>
     </Form>
   );

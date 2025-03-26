@@ -11,6 +11,7 @@ export const subjectsQueries = {
     db.query.subjects.findFirst({
       where: eq(subjects.id, id),
     }),
+  getAll:()=>db.query.subjects.findMany(),
 
   getByClassId: (classId: string) =>
     db.query.subjects.findMany({

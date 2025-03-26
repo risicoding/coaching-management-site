@@ -8,14 +8,34 @@ import { Button } from "@/components/ui/button";
 import AddClassForm from "./_components/class/add-class";
 import CollapsibleClass from "./_components/class/collapsible-class";
 import { SubjectCard } from "../../_components/subjects/subject-card";
+import { api } from "@/trpc/react";
 
 const Page = () => {
+  const { data: classesData } = api.classes.getAll.useQuery();
+  const { data: subjectsData } = api.subjects.getAll.useQuery();
+
   return (
     <div className="space-y-4">
       <ClassInfoBar />
-      <CollapsibleClass classNo={12}>
-        <SubjectCard name="Chemistry" id="21" time="12:00" classNo={12} />
-      </CollapsibleClass>
+      {classesData?.map((classItem) => (
+        <CollapsibleClass
+          key={classItem.id}
+          id={classItem.id}
+          classNo={classItem.classNumber}
+        >
+          {subjectsData
+            ?.filter((itx) => itx.classId === classItem.id)
+            .map((subjectItem) => (
+              <SubjectCard
+                key={subjectItem.id}
+                name={subjectItem.name}
+                id={subjectItem.id}
+                time={subjectItem.createdAt.getTime().toLocaleString()}
+                classNo={classItem.classNumber}
+              />
+            ))}
+        </CollapsibleClass>
+      ))}
     </div>
   );
 };
@@ -24,7 +44,7 @@ const ClassInfoBar = () => {
   return (
     <InforBarDialog header="Classes" Icon={School}>
       <Dialog>
-        <DialogTrigger>
+        <DialogTrigger asChild>
           <Button>
             Add Class <Plus />
           </Button>

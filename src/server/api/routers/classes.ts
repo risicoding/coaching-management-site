@@ -14,7 +14,7 @@ export const classesRouter = createTRPCRouter({
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create class",
+          message: (error as Error).message,
           cause: error,
         });
       }

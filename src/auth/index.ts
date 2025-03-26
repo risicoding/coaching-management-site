@@ -1,10 +1,9 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/server/db/db";
-import { admin } from "better-auth/plugins";
+import { admin, openAPI } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { env } from "@/env";
-import { logger } from "@/lib/logger";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -22,7 +21,7 @@ export const auth = betterAuth({
     },
   },
 
-  plugins: [admin(), nextCookies()],
+  plugins: [admin(), openAPI(), nextCookies()],
 });
 
 export type Session = typeof auth.$Infer.Session;

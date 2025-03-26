@@ -9,7 +9,7 @@ import { Clock } from "lucide-react";
 
 export interface SubjectCardProps {
   name: string;
-  classNo: number;
+  classNo?: number | null
   time: string;
   id: string;
 }

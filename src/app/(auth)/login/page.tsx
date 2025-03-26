@@ -6,7 +6,7 @@ import LoginCard from "../_components/login-card";
 const Page = () => {
   return (
     <Suspense>
-      <LoginCard />;
+      <LoginCard />
     </Suspense>
   );
 };

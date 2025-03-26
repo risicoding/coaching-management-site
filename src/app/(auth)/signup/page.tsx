@@ -5,7 +5,7 @@ import SignupCard from "../_components/signup-card";
 const Page = () => {
   return (
     <Suspense>
-      <SignupCard />;
+      <SignupCard />
     </Suspense>
   );
 };

@@ -11,7 +11,7 @@ import { classes } from "./classes";
 import { userSubject } from "./userSubject";
 
 export const subjects = pgTable("subjects", {
-  id: uuid("uuid").primaryKey().defaultRandom(),
+  id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 256 }).notNull(),
   classId: uuid("class_id").references(() => classes.id, {
     onDelete: "cascade",

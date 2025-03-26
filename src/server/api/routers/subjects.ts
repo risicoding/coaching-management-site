@@ -20,6 +20,24 @@ export const subjectsRouter = createTRPCRouter({
       }
     }),
 
+  getAll: adminProcedure.query(async () => {
+    try {
+      const result = await subjectsQueries.getAll();
+      if (!result)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Subjects not found",
+        });
+      return result;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch subject by ID",
+        cause: error,
+      });
+    }
+  }),
+
   getById: adminProcedure.input(z.string()).query(async ({ input }) => {
     try {
       const result = await subjectsQueries.getById(input);
