@@ -21,7 +21,7 @@ const SubjectsInfoBar = () => {
   const utils = api.useUtils();
 
   return (
-    <div>
+    <div className='space-y-6'>
       {data?.map((itx) => (
         <SubjectCard
           key={itx.id}

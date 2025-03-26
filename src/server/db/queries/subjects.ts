@@ -1,17 +1,21 @@
 import { db } from "@/server/db/db";
 import { subjects } from "@/server/db/schemas/subjects";
 import { eq } from "drizzle-orm";
-import { userSubject } from "../schemas";
+import { type subjectInsertSchema, userSubject } from "../schemas";
+import type { z } from "zod";
 
 export const subjectsQueries = {
-  create: (subjectData: typeof subjects.$inferInsert) =>
+  create: (subjectData: z.infer<typeof subjectInsertSchema>) =>
     db.insert(subjects).values(subjectData).returning(),
 
   getById: (id: string) =>
     db.query.subjects.findFirst({
       where: eq(subjects.id, id),
     }),
-  getAll:()=>db.query.subjects.findMany(),
+  getAll: () =>
+    db.query.subjects.findMany({
+      orderBy: (subjects, { desc}) => [desc(subjects.createdAt)],
+    }),
 
   getByClassId: (classId: string) =>
     db.query.subjects.findMany({

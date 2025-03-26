@@ -14,8 +14,7 @@ export const subjectsRouter = createTRPCRouter({
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create subject",
-          cause: error,
+          message: (error as Error).message,
         });
       }
     }),
@@ -32,8 +31,7 @@ export const subjectsRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch subject by ID",
-        cause: error,
+        message: (error as Error).message,
       });
     }
   }),
@@ -51,8 +49,7 @@ export const subjectsRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch subject by ID",
-        cause: error,
+        message: (error as Error).message,
       });
     }
   }),
@@ -67,8 +64,7 @@ export const subjectsRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch subject by UUID",
-        cause: error,
+        message: (error as Error).message,
       });
     }
   }),
@@ -80,8 +76,7 @@ export const subjectsRouter = createTRPCRouter({
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch subjects for class",
-        cause: error,
+        message: (error as Error).message,
       });
     }
   }),
