@@ -1,10 +1,6 @@
 "use client";
 
 import React from "react";
-import { Plus, School } from "lucide-react";
-import { InforBarDialog } from "../../_components/info-bar-dialog";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import { SubjectCard } from "../../_components/subjects/subject-card";
 

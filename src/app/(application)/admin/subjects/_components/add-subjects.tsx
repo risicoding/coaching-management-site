@@ -60,7 +60,7 @@ const AddClassForm = () => {
   const ref = useRef<HTMLButtonElement | null>(null);
 
   const utils = api.useUtils();
-  void utils.classes.getAll.prefetch()
+  void utils.classes.getAll.prefetch();
 
   const { mutateAsync } = api.subjects.create.useMutation({
     onSuccess: async () => {
@@ -70,11 +70,16 @@ const AddClassForm = () => {
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", pricing: undefined, classId: undefined },
+    defaultValues: {
+      name: "",
+      pricing: undefined,
+      classId: undefined,
+      days: daysEnum.options.filter((val) => val !== "sun"),
+    },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data)
+    console.log(data);
     await mutateAsync(data);
   };
 
@@ -141,7 +146,11 @@ const AddClassForm = () => {
             <FormItem>
               <FormLabel>Days</FormLabel>
               <FormControl>
-                <WeekdayPicker onChange={field.onChange} value={field.value} />
+                <WeekdayPicker
+                  onChange={field.onChange}
+                  value={field.value}
+                  disabled={form.formState.isSubmitting}
+                />
               </FormControl>
             </FormItem>
           )}
@@ -166,9 +175,7 @@ type ClassesSelectProps = {
   onBlur: () => void;
 };
 const ClassesSelect = ({ onChange, value, onBlur }: ClassesSelectProps) => {
-  const { data: classesData ,isLoading} = api.classes.getAll.useQuery();
-
-  if(isLoading)return <Loader className="animate-spir"/>
+  const { data: classesData } = api.classes.getAll.useQuery();
 
   return (
     <Select onValueChange={onChange} value={value ?? undefined}>
