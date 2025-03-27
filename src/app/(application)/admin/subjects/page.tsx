@@ -32,7 +32,7 @@ const SubjectsInfoBar = () => {
           </Button>
         </AddSubjectsDialog>
       </InforBarDialog>
-      <div className="flex flex-col gap-4">
+      <div className="grid sm:grid-cols-3 grid-cols-1 gap-4">
         {data?.map((itx) => (
           <Link key={itx.id} href={`/admin/subjects/${itx.id}`}>
             <SubjectCard

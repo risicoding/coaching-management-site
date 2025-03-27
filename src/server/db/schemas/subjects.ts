@@ -21,7 +21,7 @@ export const subjects = pgTable("subjects", {
     onDelete: "cascade",
   }),
   days: json().$type<z.infer<typeof daysEnum>[]>().notNull(),
-
+  time:varchar(),
   pricing: integer("pricing").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)

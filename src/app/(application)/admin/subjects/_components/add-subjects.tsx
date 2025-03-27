@@ -54,6 +54,7 @@ const formSchema = z.object({
   pricing: z.coerce.number(),
   classId: z.string().optional(),
   days: z.array(daysEnum),
+  time: z.string().optional(),
 });
 
 const AddSubjectForm = () => {
@@ -150,6 +151,23 @@ const AddSubjectForm = () => {
                   onChange={field.onChange}
                   value={field.value}
                   disabled={form.formState.isSubmitting}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="time"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Time (optional)</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Select time"
+                  type="time"
+                  disabled={form.formState.isSubmitting}
+                  {...field}
                 />
               </FormControl>
             </FormItem>
