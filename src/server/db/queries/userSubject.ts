@@ -1,7 +1,7 @@
 import { db } from "@/server/db/db";
 import { userSubject } from "@/server/db/schemas/userSubject";
 import { eq, and } from "drizzle-orm";
-import { user } from "../schemas";
+import { subjects, user  } from "../schemas";
 
 export const userSubjectQueries = {
   enrollUser: (userSubjectData: typeof userSubject.$inferInsert) =>
@@ -25,12 +25,45 @@ export const userSubjectQueries = {
       ),
     }),
 
+  getEnrolledSubject: async (userId: string, subjectId: string) => {
+    const result = await db
+      .select({
+        id: subjects.id,
+        name: subjects.name,
+        days: subjects.days,
+        pricing: subjects.pricing,
+      })
+      .from(userSubject)
+      .innerJoin(subjects, eq(userSubject.subjectId, subjects.id))
+      .where(
+        and(
+          eq(userSubject.userId, userId),
+          eq(userSubject.subjectId, subjectId),
+        ),
+      )
+      .limit(1);
+
+    return result.length > 0 ? result[0] : undefined;
+  },
+
   getUsersInSubject: (subjectId: string) =>
     db
       .select()
       .from(userSubject)
       .innerJoin(user, eq(userSubject.userId, user.id))
       .where(eq(userSubject.subjectId, subjectId)),
+
+  getSubjectsByUserId: (userId: string) =>
+    db
+      .select({
+        id: subjects.id,
+        name: subjects.name,
+        days: subjects.days,
+        pricing: subjects.pricing,
+      })
+      .from(userSubject)
+      .innerJoin(subjects, eq(userSubject.subjectId, subjects.id))
+      .where(eq(userSubject.userId, userId)),
 
   unenrollUser: (userId: string, subjectId: string) =>
     db

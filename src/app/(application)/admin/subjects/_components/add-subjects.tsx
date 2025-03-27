@@ -43,7 +43,7 @@ export const AddSubjectsDialog = ({
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="w-3/4">
         <DialogTitle>Add new Subject</DialogTitle>
-        <AddClassForm />
+        <AddSubjectForm />
       </DialogContent>
     </Dialog>
   );
@@ -52,11 +52,11 @@ export const AddSubjectsDialog = ({
 const formSchema = z.object({
   name: z.string(),
   pricing: z.coerce.number(),
-  classId: z.string(),
+  classId: z.string().optional(),
   days: z.array(daysEnum),
 });
 
-const AddClassForm = () => {
+const AddSubjectForm = () => {
   const ref = useRef<HTMLButtonElement | null>(null);
 
   const utils = api.useUtils();
@@ -160,7 +160,7 @@ const AddClassForm = () => {
           {form.formState.isSubmitting ? (
             <Loader className="animate-spin" />
           ) : (
-            "Add Class"
+            "Add Subject"
           )}
         </Button>
         <DialogClose className="hidden" ref={ref} />
@@ -193,4 +193,3 @@ const ClassesSelect = ({ onChange, value, onBlur }: ClassesSelectProps) => {
     </Select>
   );
 };
-export default AddClassForm;

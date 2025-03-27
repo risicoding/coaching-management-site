@@ -4,6 +4,7 @@ import { subjectsQueries } from "@/server/db/queries/subjects";
 import { subjectInsertSchema } from "@/server/db/schemas/zodSchemas";
 import { createTRPCRouter } from "../trpc";
 import { z } from "zod";
+import { userSubjectQueries } from "@/server/db/queries/userSubject";
 
 export const subjectsRouter = createTRPCRouter({
   create: adminProcedure
@@ -59,7 +60,7 @@ export const subjectsRouter = createTRPCRouter({
       user: { id },
     } = ctx.session;
     try {
-      const result = await subjectsQueries.getEnrolled(id);
+      const result = await userSubjectQueries.getSubjectsByUserId(id);
       return result;
     } catch (error) {
       throw new TRPCError({
@@ -68,6 +69,32 @@ export const subjectsRouter = createTRPCRouter({
       });
     }
   }),
+
+  getEnrolledSubject: privateProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const { id } = ctx.session.user;
+      try {
+        let result = await userSubjectQueries.getEnrolledSubject(id, input);
+
+        if (!result) {
+          await userSubjectQueries.enrollUser({
+            userId: id,
+            subjectId: input,
+          });
+
+          // Refetch the enrolled subject after enrollment
+          result = await userSubjectQueries.getEnrolledSubject(id, input);
+        }
+
+        return result;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: (error as Error).message,
+        });
+      }
+    }),
 
   getByClassId: adminProcedure.input(z.string()).query(async ({ input }) => {
     try {
@@ -80,6 +107,37 @@ export const subjectsRouter = createTRPCRouter({
       });
     }
   }),
+
+  getByUserId: privateProcedure.query(async ({ ctx }) => {
+    const { id } = ctx.session.user;
+    try {
+      const result = await userSubjectQueries.getSubjectsByUserId(id);
+      return result;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: (error as Error).message,
+      });
+    }
+  }),
+
+  enroll: privateProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const { id } = ctx.session.user;
+      try {
+        const result = await userSubjectQueries.enrollUser({
+          userId: id,
+          subjectId: input,
+        });
+        return result;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: (error as Error).message,
+        });
+      }
+    }),
 
   update: adminProcedure
     .input(

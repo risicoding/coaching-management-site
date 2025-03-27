@@ -1,23 +1,46 @@
 "use client";
-import { useState } from "react";
-import Menu from "./_components/menu";
-import { Button } from "@/components/ui/button";
-import { api } from "@/trpc/react";
+
 import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { InforBarDialog } from "@/app/(application)/_components/info-bar-dialog";
+import { Clipboard, LayoutList, Pen } from "lucide-react";
+import { api } from "@/trpc/react";
+import { env } from "@/env";
+import {toast} from 'sonner'
 
 const Page = () => {
-  const params = useParams<{ courseId: string }>();
-  const { courseId } = params;
-  const [selected, setSelected] = useState("Home");
+  const params = useParams<{ subjectId: string }>();
+  const { subjectId } = params;
+
+  const { data } = api.subjects.getById.useQuery(subjectId);
+
+  const handleCopyLink = async () => {
+    const url = new URL(
+      `/dashboard/subjects/${subjectId}`,
+      env.NEXT_PUBLIC_BETTER_AUTH_URL,
+    ).toString();
+
+    try {
+      await navigator.clipboard.writeText(url);
+      toast("Invite link copied to clipboard");
+    } catch (error) {
+      console.error("Failed to copy:", error);
+    }
+  };
 
   return (
-    <div className="space-y-2 py-6">
-      {/* Top Bar */}
-      {/* <div className="flex items-center justify-between border-b pb-2"> */}
-      {/*   <h2 className="text-lg font-bold">{course.data?.name}</h2> */}
-      {/*   <Button>Edit</Button> */}
-      {/* </div> */}
-      {/* <Menu /> */}
+    <div className="space-y-6">
+      <InforBarDialog Icon={LayoutList} header={data?.name ?? "loading"}>
+        <div className="flex gap-4">
+          <Button variant="outline">
+            Edit
+            <Pen />
+          </Button>
+          <Button onClick={handleCopyLink}>
+            Copy link <Clipboard />
+          </Button>
+        </div>
+      </InforBarDialog>
 
       {/* Content Area */}
       <div className="p-4">{/* Placeholder content */}</div>

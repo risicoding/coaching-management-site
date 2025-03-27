@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { env } from "@/env";
@@ -30,7 +30,10 @@ const seedClasses = async () => {
   console.log("Generated classes:", classes);
 
   try {
-    const insertedClasses = await db.insert(classesSchema).values(classes).returning();
+    const insertedClasses = await db
+      .insert(classesSchema)
+      .values(classes)
+      .returning();
     console.log("Classes inserted successfully:", insertedClasses);
   } catch (error) {
     console.error("Error inserting classes:", error);
@@ -48,12 +51,16 @@ const seedSubjects = async () => {
     name: `Subject ${Math.floor(Math.random() * 100) + 1}`,
     classId: classIds[Math.floor(Math.random() * classIds.length)], // Random existing class ID
     pricing: Math.floor(Math.random() * 500) + 1000, // Random pricing between 1000-1500
+    days: schema.daysEnum.options.filter((val) => val !== "sun"),
   }));
 
   console.log("Generated subjects:", subjects);
 
   try {
-    const insertedSubjects = await db.insert(subjectSchema).values(subjects).returning();
+    const insertedSubjects = await db
+      .insert(subjectSchema)
+      .values(subjects)
+      .returning();
     console.log("Subjects inserted successfully:", insertedSubjects);
   } catch (error) {
     console.error("Error inserting subjects:", error);
@@ -72,4 +79,3 @@ main().catch((error) => {
   console.error("Seeding failed:", error);
   process.exit(1);
 });
-

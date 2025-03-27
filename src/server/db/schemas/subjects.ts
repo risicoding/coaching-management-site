@@ -13,13 +13,15 @@ import { userSubject } from "./userSubject";
 import type { z } from "zod";
 import type { daysEnum } from "./zodSchemas";
 
+
 export const subjects = pgTable("subjects", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 256 }).notNull(),
   classId: uuid("class_id").references(() => classes.id, {
     onDelete: "cascade",
   }),
-  days: json().$type<z.infer<typeof daysEnum>[]>(),
+  days: json().$type<z.infer<typeof daysEnum>[]>().notNull(),
+
   pricing: integer("pricing").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
