@@ -1,85 +1,74 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const views = [
-  { name: "Overview", slug: "overview" },
-  { name: "Attendance", slug: "attendance" },
-  { name: "Tests", slug: "tests" },
-];
-
-const Menu = () => {
+export const SubjectsMenu = () => {
   return (
-    <Tabs defaultValue="overview" className="min-h-screen w-full">
-      <TabsList>
-        {views.map((view) => (
-          <TabsTrigger key={view.slug} value={view.slug}>
-            {view.name}
-          </TabsTrigger>
-        ))}
+    <Tabs defaultValue="home">
+      <TabsList className="grid w-full grid-cols-4">
+        <TabsTrigger value="home">Home</TabsTrigger>
+        <TabsTrigger value="attendance">Attendance</TabsTrigger>
+        <TabsTrigger value="tests">Tests</TabsTrigger>
+        <TabsTrigger value="payments">Payments</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="overview">
-        <Card className="">
-          <CardContent></CardContent>
+      <TabsContent value="home">
+        <Card>
+          <CardHeader>
+            <CardTitle>Home</CardTitle>
+            <CardDescription>Welcome to the dashboard.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Home content goes here.</p>
+          </CardContent>
         </Card>
       </TabsContent>
 
       <TabsContent value="attendance">
-        <Card className="">
-          <CardContent></CardContent>
+        <Card>
+          <CardHeader>
+            <CardTitle>Attendance</CardTitle>
+            <CardDescription>View your attendance records.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Attendance details go here.</p>
+          </CardContent>
         </Card>
       </TabsContent>
+
       <TabsContent value="tests">
-        <Card className="">
-          <CardContent></CardContent>
+        <Card>
+          <CardHeader>
+            <CardTitle>Tests</CardTitle>
+            <CardDescription>Check your test results.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Test information goes here.</p>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="fees">
+        <Card>
+          <CardHeader>
+            <CardTitle>Fees</CardTitle>
+            <CardDescription>Manage your fee payments.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Fee payment details go here.</p>
+          </CardContent>
+          <CardFooter>
+            <Button>Pay Now</Button>
+          </CardFooter>
         </Card>
       </TabsContent>
     </Tabs>
   );
 };
-
-export default Menu;
-// import { useState } from "react";
-// import Link from "next/link";
-// import { Button } from "@/components/ui/button";
-//
-// const menuItems = [
-//   { name: "Overview" },
-//   { name: "About" },
-//   { name: "Services" },
-//   { name: "Contact" },
-// ];
-//
-// type MenuProps = {
-//   value?: string;
-//   onChange?: (value: string) => void;
-// };
-//
-// const Menu = ({ value, onChange }: MenuProps) => {
-//   const [selected, setSelected] = useState(value ?? menuItems[0]?.name);
-//
-//   const handleClick = (name: string) => {
-//     setSelected(name);
-//     onChange?.(name);
-//   };
-//
-//   return (
-//     <nav className="flex gap-1">
-//       {menuItems.map(({ name, href }) => (
-//         <Button
-//           key={name}
-//           variant={selected === name ? "menuActive" : "ghost"}
-//           className=""
-//           onClick={(e) => {
-//             e.preventDefault();
-//             handleClick(name);
-//           }}
-//         >
-//           {name}
-//         </Button>
-//       ))}
-//     </nav>
-//   );
-// };
-//
-// export default Menu;

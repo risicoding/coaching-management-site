@@ -6,10 +6,12 @@ import { InforBarDialog } from "@/app/(application)/_components/info-bar-dialog"
 import { Clipboard, LayoutList, Pen } from "lucide-react";
 import { api } from "@/trpc/react";
 import { env } from "@/env";
-import {toast} from 'sonner'
+import { toast } from "sonner";
+import { SubjectsMenu } from "./_components/menu";
 
 const Page = () => {
   const params = useParams<{ subjectId: string }>();
+
   const { subjectId } = params;
 
   const { data } = api.subjects.getById.useQuery(subjectId);
@@ -42,8 +44,9 @@ const Page = () => {
         </div>
       </InforBarDialog>
 
-      {/* Content Area */}
-      <div className="p-4">{/* Placeholder content */}</div>
+      <div className="p-0">
+        <SubjectsMenu />
+      </div>
     </div>
   );
 };
