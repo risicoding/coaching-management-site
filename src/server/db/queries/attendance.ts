@@ -1,6 +1,6 @@
 import { db } from "@/server/db/db";
 import { attendance } from "@/server/db/schemas/attendance";
-import { eq } from "drizzle-orm";
+import { and, count, eq, gte, lte } from "drizzle-orm";
 
 export const attendanceQueries = {
   create: async (attendanceData: typeof attendance.$inferInsert) => {
@@ -17,6 +17,60 @@ export const attendanceQueries = {
     return await db.query.attendance.findMany({
       where: eq(attendance.subjectId, id),
     });
+  },
+
+  getMonthlyAttendanceForUser: async (userId: string, subjectId: string) => {
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDayOfMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      999,
+    );
+
+    const result = await db
+      .select({ count: count() })
+      .from(attendance)
+      .where(
+        and(
+          eq(attendance.userId, userId),
+          eq(attendance.subjectId, subjectId),
+          gte(attendance.date, firstDayOfMonth),
+          lte(attendance.date, lastDayOfMonth),
+        ),
+      );
+
+    return result[0]?.count ?? 0;
+  },
+
+  getTodaysAttendanceForSubject: async (subjectId: string) => {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+    const result = await db
+      .select({
+        id: attendance.id,
+        date: attendance.date,
+        userId: attendance.userId,
+        createdAt: attendance.createdAt,
+      })
+
+      .from(attendance)
+      .where(
+        and(
+          eq(attendance.subjectId, subjectId),
+          gte(attendance.date, todayStart),
+          lte(attendance.date, todayEnd),
+        ),
+      );
+
+    return result;
   },
 
   getByUserAndSubject: async (userId: string, subjectId: string) => {

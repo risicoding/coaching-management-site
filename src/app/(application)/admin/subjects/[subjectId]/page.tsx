@@ -7,7 +7,7 @@ import { Clipboard, LayoutList, Pen } from "lucide-react";
 import { api } from "@/trpc/react";
 import { env } from "@/env";
 import { toast } from "sonner";
-import { SubjectsMenu } from "./_components/menu";
+import { SubjectsMenu } from "./_components/menu/menu";
 
 const Page = () => {
   const params = useParams<{ subjectId: string }>();
