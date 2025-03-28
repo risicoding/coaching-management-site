@@ -2,12 +2,12 @@
 
 import React from "react";
 import { Plus, School } from "lucide-react";
-import { InforBarDialog } from "../../_components/info-bar-dialog";
+import { InfoBar } from "@/components/info-bar";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import AddClassForm from "./_components/class/add-class";
-import CollapsibleClass from "./_components/class/collapsible-class";
-import { SubjectCard } from "../../_components/subjects/subject-card";
+import { AddClassForm } from "@/components/class/add-class";
+import { CollapsibleClass } from "@/components/class/collapsible-class";
+import { SubjectCard } from "@/components/subjects/subject-card";
 import { api } from "@/trpc/react";
 
 const Page = () => {
@@ -46,7 +46,7 @@ const Page = () => {
 
 const ClassInfoBar = () => {
   return (
-    <InforBarDialog header="Classes" Icon={School}>
+    <InfoBar header="Classes" Icon={School}>
       <Dialog>
         <DialogTrigger asChild>
           <Button>
@@ -57,7 +57,7 @@ const ClassInfoBar = () => {
           <AddClassForm />
         </DialogContent>
       </Dialog>
-    </InforBarDialog>
+    </InfoBar>
   );
 };
 

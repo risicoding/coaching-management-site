@@ -44,7 +44,7 @@ const formSchema = z.object({
     .min(1, { message: "Expected value more or equal to 1" }),
 });
 
-const AddClassForm = () => {
+export const AddClassForm = () => {
   const ref = useRef<HTMLButtonElement | null>(null);
   const utils = api.useUtils();
   const { mutateAsync } = api.classes.create.useMutation({
@@ -95,4 +95,3 @@ const AddClassForm = () => {
   );
 };
 
-export default AddClassForm;

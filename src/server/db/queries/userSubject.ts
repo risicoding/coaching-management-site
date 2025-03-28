@@ -1,7 +1,7 @@
 import { db } from "@/server/db/db";
 import { userSubject } from "@/server/db/schemas/userSubject";
 import { eq, and } from "drizzle-orm";
-import { subjects, user  } from "../schemas";
+import { subjects, user } from "../schemas";
 
 export const userSubjectQueries = {
   enrollUser: (userSubjectData: typeof userSubject.$inferInsert) =>
@@ -48,7 +48,12 @@ export const userSubjectQueries = {
 
   getUsersInSubject: (subjectId: string) =>
     db
-      .select()
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+      })
       .from(userSubject)
       .innerJoin(user, eq(userSubject.userId, user.id))
       .where(eq(userSubject.subjectId, subjectId)),
@@ -60,7 +65,7 @@ export const userSubjectQueries = {
         name: subjects.name,
         days: subjects.days,
         pricing: subjects.pricing,
-      time:subjects.time
+        time: subjects.time,
       })
       .from(userSubject)
       .innerJoin(subjects, eq(userSubject.subjectId, subjects.id))

@@ -1,6 +1,6 @@
 "use client";
 
-import { SubjectCard } from "@/app/(application)/_components/subjects/subject-card";
+import { SubjectCard } from "@/components/subjects/subject-card";
 import { api } from "@/trpc/react";
 import { Loader } from "lucide-react";
 import { useParams } from "next/navigation";

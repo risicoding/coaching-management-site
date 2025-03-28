@@ -1,8 +1,8 @@
 "use client";
 import { api } from "@/trpc/react";
-import { SubjectCard } from "../_components/subjects/subject-card";
-import { InfoBar } from "../_components/info-bar";
+import { SubjectCard } from "@/components/subjects/subject-card";
 import { FolderOpen } from "lucide-react";
+import { InfoBar } from "@/components/info-bar";
 
 const Page = () => {
   const { data } = api.subjects.getEnrolled.useQuery();
