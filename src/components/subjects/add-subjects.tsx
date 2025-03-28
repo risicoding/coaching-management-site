@@ -196,7 +196,7 @@ type ClassesSelectProps = {
   value: string | null | undefined;
   onBlur: () => void;
 };
-const ClassesSelect = ({ onChange, value, onBlur }: ClassesSelectProps) => {
+const ClassesSelect = ({ onChange, value  }: ClassesSelectProps) => {
   const { data: classesData } = api.classes.getAll.useQuery();
 
   return (

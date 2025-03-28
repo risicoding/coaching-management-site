@@ -1,12 +1,12 @@
 "use client";
 
-import { AddSubjectsDialog } from "./_components/add-subjects";
+import { AddSubjectsDialog } from "@/components/subjects/add-subjects";
 
 import React from "react";
 import { api } from "@/trpc/react";
-import { SubjectCard } from "../../_components/subjects/subject-card";
+import { SubjectCard } from "@/components/subjects/subject-card";
 import Link from "next/link";
-import { InforBarDialog } from "../../_components/info-bar-dialog";
+import { InfoBar } from "@/components/info-bar";
 import { Button } from "@/components/ui/button";
 import { Folder, Plus } from "lucide-react";
 
@@ -24,15 +24,15 @@ const SubjectsInfoBar = () => {
 
   return (
     <div className="space-y-6">
-      <InforBarDialog header="Subjects" Icon={Folder}>
+      <InfoBar header="Subjects" Icon={Folder}>
         <AddSubjectsDialog>
           <Button>
             Add Subject
             <Plus />
           </Button>
         </AddSubjectsDialog>
-      </InforBarDialog>
-      <div className="grid sm:grid-cols-3 grid-cols-1 gap-4">
+      </InfoBar>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {data?.map((itx) => (
           <Link key={itx.id} href={`/admin/subjects/${itx.id}`}>
             <SubjectCard

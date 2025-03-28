@@ -10,18 +10,17 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
 
-export function AppSidebar({
-  items,
-}: {
-  items: { title: string; href: string; icon: React.JSX.Element }[];
-}) {
-  const sidebar = useSidebar();
+export type AppSidebarProps={
+  items:{title:string,href:string,icon:React.JSX.Element}[]
+}
 
+export const AppSidebar=({
+  items,
+}: AppSidebarProps)=> {
   return (
     <Sidebar variant="floating" collapsible="icon">
       <SidebarHeader className="flex gap-4 px-4 py-4">

@@ -2,12 +2,12 @@
 
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { InforBarDialog } from "@/app/(application)/_components/info-bar-dialog";
+import { InfoBar } from "@/components/info-bar";
 import { Clipboard, LayoutList, Pen } from "lucide-react";
 import { api } from "@/trpc/react";
 import { env } from "@/env";
 import { toast } from "sonner";
-import { SubjectsMenu } from "./_components/menu/menu";
+import { SubjectsMenu } from "@/components/subjects/menu/menu";
 
 const Page = () => {
   const params = useParams<{ subjectId: string }>();
@@ -32,7 +32,7 @@ const Page = () => {
 
   return (
     <div className="space-y-6">
-      <InforBarDialog Icon={LayoutList} header={data?.name ?? "loading"}>
+      <InfoBar Icon={LayoutList} header={data?.name ?? "loading"}>
         <div className="flex gap-2">
           <Button variant="outline">
             Edit
@@ -42,7 +42,7 @@ const Page = () => {
             Copy link <Clipboard />
           </Button>
         </div>
-      </InforBarDialog>
+      </InfoBar>
 
       <div className="p-0">
         <SubjectsMenu />

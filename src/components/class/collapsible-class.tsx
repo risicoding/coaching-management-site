@@ -7,7 +7,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Ellipsis } from "lucide-react";
 import { ClassDropdown } from "./class-dropdown";
 
 interface CollapsibleClassProps {
@@ -16,7 +15,7 @@ interface CollapsibleClassProps {
   children: React.ReactNode;
 }
 
-const CollapsibleClass: React.FC<CollapsibleClassProps> = ({
+export const CollapsibleClass: React.FC<CollapsibleClassProps> = ({
   id,
   classNo,
   children,
@@ -38,4 +37,3 @@ const CollapsibleClass: React.FC<CollapsibleClassProps> = ({
   );
 };
 
-export default CollapsibleClass;
