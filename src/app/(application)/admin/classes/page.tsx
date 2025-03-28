@@ -23,6 +23,8 @@ const Page = () => {
           id={classItem.id}
           classNo={classItem.classNumber}
         >
+          <div className='grid grid-cols-1 sm:grid-cols-3 gap-3'>
+
           {subjectsData
             ?.filter((itx) => itx.classId === classItem.id)
             .map((subjectItem) => (
@@ -30,10 +32,12 @@ const Page = () => {
                 key={subjectItem.id}
                 name={subjectItem.name}
                 id={subjectItem.id}
-                time={subjectItem.createdAt.getTime().toLocaleString()}
+                time={subjectItem.time}
                 classNo={classItem.classNumber}
               />
             ))}
+
+          </div>
         </CollapsibleClass>
       ))}
     </div>

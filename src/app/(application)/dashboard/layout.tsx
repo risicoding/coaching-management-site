@@ -8,7 +8,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="p-4">
       <SidebarProvider>
         <AppSidebar />
-        <div className="size-full">
+        <div className="size-full space-y-4">
           <Navbar />
           {children}
         </div>

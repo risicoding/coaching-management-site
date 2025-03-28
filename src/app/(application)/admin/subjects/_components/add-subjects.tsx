@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { WeekdayPicker } from "./week-day-picker";
+import { convertToAMPM } from "@/lib/format-time";
 
 export const AddSubjectsDialog = ({
   children,
@@ -41,7 +42,7 @@ export const AddSubjectsDialog = ({
   return (
     <Dialog>
       <DialogTrigger>{children}</DialogTrigger>
-      <DialogContent className="w-3/4">
+      <DialogContent className=" w-full px-3 sm:p-6 sm:w-3/4">
         <DialogTitle>Add new Subject</DialogTitle>
         <AddSubjectForm />
       </DialogContent>
@@ -54,7 +55,10 @@ const formSchema = z.object({
   pricing: z.coerce.number(),
   classId: z.string().optional(),
   days: z.array(daysEnum),
-  time: z.string().optional(),
+  time: z
+    .string()
+    .transform((val) => convertToAMPM(val))
+    .optional(),
 });
 
 const AddSubjectForm = () => {

@@ -12,11 +12,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export const SubjectsMenu = () => {
   return (
     <Tabs defaultValue="home">
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList >
         <TabsTrigger value="home">Home</TabsTrigger>
         <TabsTrigger value="attendance">Attendance</TabsTrigger>
         <TabsTrigger value="tests">Tests</TabsTrigger>
         <TabsTrigger value="payments">Payments</TabsTrigger>
+        <TabsTrigger value="students">Students</TabsTrigger>
       </TabsList>
 
       <TabsContent value="home">
@@ -55,7 +56,21 @@ export const SubjectsMenu = () => {
         </Card>
       </TabsContent>
 
-      <TabsContent value="fees">
+      <TabsContent value="payments">
+        <Card>
+          <CardHeader>
+            <CardTitle>Fees</CardTitle>
+            <CardDescription>Manage your fee payments.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Fee payment details go here.</p>
+          </CardContent>
+          <CardFooter>
+            <Button>Pay Now</Button>
+          </CardFooter>
+        </Card>
+      </TabsContent>
+      <TabsContent value="students">
         <Card>
           <CardHeader>
             <CardTitle>Fees</CardTitle>

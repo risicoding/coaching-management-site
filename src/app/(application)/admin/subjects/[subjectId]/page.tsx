@@ -33,7 +33,7 @@ const Page = () => {
   return (
     <div className="space-y-6">
       <InforBarDialog Icon={LayoutList} header={data?.name ?? "loading"}>
-        <div className="flex gap-4">
+        <div className="flex gap-2">
           <Button variant="outline">
             Edit
             <Pen />

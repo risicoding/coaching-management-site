@@ -23,7 +23,7 @@ const Page = () => {
       </Link>
 
       {session && (
-        <Link href={session?.user.role === "admin" ? "/admin" : "/dashbaord"}>
+        <Link href={session?.user.role === "admin" ? "/admin" : "/dashboard"}>
           <Button>Dashboard</Button>
         </Link>
       )}

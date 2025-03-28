@@ -4,7 +4,7 @@ import React from "react";
 interface InforBarProps {
   Icon: LucideIcon;
   header: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const InforBarDialog = ({ Icon, header, children }: InforBarProps) => {

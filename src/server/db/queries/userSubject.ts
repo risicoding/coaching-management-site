@@ -60,6 +60,7 @@ export const userSubjectQueries = {
         name: subjects.name,
         days: subjects.days,
         pricing: subjects.pricing,
+      time:subjects.time
       })
       .from(userSubject)
       .innerJoin(subjects, eq(userSubject.subjectId, subjects.id))

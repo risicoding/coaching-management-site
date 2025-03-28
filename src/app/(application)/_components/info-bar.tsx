@@ -1,36 +1,20 @@
-import { Button } from "@/components/ui/button";
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import React from "react";
 
-interface InfoBarProps {
-  icon: LucideIcon;
+interface InforBarProps {
+  Icon: LucideIcon;
   header: string;
-  buttonText: string;
-  buttonIcon?: LucideIcon;
-  onButtonClick: () => void;
+  children?: React.ReactNode;
 }
 
-const InfoBar = ({
-  icon: Icon,
-  header,
-  buttonText,
-  buttonIcon: ButtonIcon,
-  onButtonClick,
-}: InfoBarProps) => {
+export const InfoBar = ({ Icon, header, children }: InforBarProps) => {
   return (
-    <div className="flex items-center justify-between rounded-lg">
-      {/* Left Section - Icon and Header */}
-      <div className="flex items-center gap-2">
-        <Icon className="h-6 w-6" />
-        <span className="text-lg font-medium">{header}</span>
+    <div className="flex w-full items-center justify-between">
+      <div className="flex gap-2">
+        <Icon />
+        <h2 className="text-md font-semibold">{header}</h2>
       </div>
-
-      {/* Right Section - Button */}
-      <Button onClick={onButtonClick}>
-        {ButtonIcon && <ButtonIcon className="h-5 w-5" />}
-        {buttonText}
-      </Button>
+      <div className="flex">{children}</div>
     </div>
   );
 };
-
-export default InfoBar;

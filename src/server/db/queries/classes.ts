@@ -6,7 +6,10 @@ export const classesQueries = {
   create: (classData: typeof classes.$inferInsert) =>
     db.insert(classes).values(classData).returning(),
 
-  getAll: () => db.query.classes.findMany(),
+  getAll: () =>
+    db.query.classes.findMany({
+      orderBy: (classes, { asc }) => [asc(classes.classNumber)],
+    }),
 
   getById: (id: string) =>
     db.query.classes.findFirst({

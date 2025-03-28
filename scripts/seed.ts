@@ -8,6 +8,23 @@ import {
   subjects as subjectSchema,
 } from "@/server/db/schemas";
 
+import { format } from "date-fns";
+
+function getRandomTime() {
+  // Generate a random hour (0-23) and minute (0-59)
+  const randomHour = Math.floor(Math.random() * 24);
+  const randomMinute = Math.floor(Math.random() * 60);
+
+  // Create a new Date object
+  const date = new Date();
+
+  // Set the hour and minute to the random values
+  date.setHours(randomHour, randomMinute, 0, 0);
+
+  // Format the date to hh:mm am/pm format
+  return format(date, "hh:mm a");
+}
+
 const globalForDb = globalThis as unknown as {
   conn: postgres.Sql | undefined;
 };
@@ -22,9 +39,9 @@ const db = drizzle(conn, { schema, logger: true });
 const seedClasses = async () => {
   console.log("Seeding classes...");
 
-  const classes = Array.from({ length: 10 }, () => ({
+  const classes = Array.from({ length: 10 }, (_, i) => ({
     id: crypto.randomUUID(),
-    classNumber: Math.floor(Math.random() * 12) + 1, // Random class number (1-12)
+    classNumber: i + 1, // Random class number (1-12)
   }));
 
   console.log("Generated classes:", classes);
@@ -52,6 +69,7 @@ const seedSubjects = async () => {
     classId: classIds[Math.floor(Math.random() * classIds.length)], // Random existing class ID
     pricing: Math.floor(Math.random() * 500) + 1000, // Random pricing between 1000-1500
     days: schema.daysEnum.options.filter((val) => val !== "sun"),
+    time: getRandomTime(),
   }));
 
   console.log("Generated subjects:", subjects);
