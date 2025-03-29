@@ -8,11 +8,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AttendanceCard from "./attendance";
+import { AttendanceMenuCard } from "./attendance/attendance-menu-card";
 
 export const SubjectsMenu = () => {
   return (
-    <Tabs defaultValue="home" className="space-y-6">
+    <Tabs defaultValue="home" className="space-y 6 overflow-scroll">
       <TabsList>
         <TabsTrigger value="home">Home</TabsTrigger>
         <TabsTrigger value="attendance">Attendance</TabsTrigger>
@@ -28,7 +28,7 @@ export const SubjectsMenu = () => {
       </TabsContent>
 
       <TabsContent value="attendance">
-        <AttendanceCard/>
+        <AttendanceMenuCard />
       </TabsContent>
 
       <TabsContent value="tests">

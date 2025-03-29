@@ -53,7 +53,7 @@ const LoginForm = () => {
     }
 
     const { data: session } = await authClient.getSession();
-    router.push(session?.user.role === "/admin" ? "/admin" : "/dashboard");
+    router.push(session?.user.role === "admin" ? "/admin" : "/dashboard");
   };
 
   return (

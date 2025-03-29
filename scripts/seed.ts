@@ -65,7 +65,7 @@ const seedSubjects = async () => {
 
   const subjects = Array.from({ length: 15 }, () => ({
     id: crypto.randomUUID(),
-    name: `Subject ${Math.floor(Math.random() * 100) + 1}`,
+    name: `Test-Subject ${Math.floor(Math.random() * 100) + 1}`,
     classId: classIds[Math.floor(Math.random() * classIds.length)], // Random existing class ID
     pricing: Math.floor(Math.random() * 500) + 1000, // Random pricing between 1000-1500
     days: schema.daysEnum.options.filter((val) => val !== "sun"),

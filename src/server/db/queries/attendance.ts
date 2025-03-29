@@ -19,35 +19,18 @@ export const attendanceQueries = {
     });
   },
 
-  getMonthlyAttendanceForUser: async (userId: string, subjectId: string) => {
-    const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastDayOfMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-      999,
-    );
-
+  getAttendanceByUserIdSubjectId: async (userId: string, subjectId: string) => {
     const result = await db
-      .select({ count: count() })
+      .select()
       .from(attendance)
       .where(
-        and(
-          eq(attendance.userId, userId),
-          eq(attendance.subjectId, subjectId),
-          gte(attendance.date, firstDayOfMonth),
-          lte(attendance.date, lastDayOfMonth),
-        ),
+        and(eq(attendance.userId, userId), eq(attendance.subjectId, subjectId)),
       );
 
-    return result[0]?.count ?? 0;
+    return result;
   },
 
-  getTodaysAttendanceForSubject: async (subjectId: string) => {
+  getTodaysAttendanceBySubjectId: async (subjectId: string) => {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 

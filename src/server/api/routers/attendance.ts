@@ -4,6 +4,7 @@ import { attendanceQueries } from "@/server/db/queries/attendance";
 import { attendanceInsertSchema } from "@/server/db/schemas/zodSchemas";
 import { createTRPCRouter } from "../trpc";
 import { z } from "zod";
+import { transformData } from "@/lib/date";
 
 export const attendanceRouter = createTRPCRouter({
   create: adminProcedure
@@ -50,6 +51,39 @@ export const attendanceRouter = createTRPCRouter({
             message: "Attendance record not found",
           });
         }
+        return result;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch attendance records for subject",
+          cause: error,
+        });
+      }
+    }),
+
+  getAttendanceByUserIdSubjectId: adminProcedure
+    .input(z.object({ userId: z.string(), subjectId: z.string() }))
+    .query(async ({ input }) => {
+      try {
+        const result = await attendanceQueries.getAttendanceByUserIdSubjectId(
+          input.userId,
+          input.subjectId,
+        );
+        return transformData(result);
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: (error as Error).message,
+        });
+      }
+    }),
+
+  getTodaysAttendanceBySubjectId: adminProcedure
+    .input(z.string())
+    .query(async ({ input }) => {
+      try {
+        const result =
+          await attendanceQueries.getTodaysAttendanceBySubjectId(input);
         return result;
       } catch (error) {
         throw new TRPCError({

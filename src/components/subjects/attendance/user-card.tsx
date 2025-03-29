@@ -1,0 +1,67 @@
+"use client";
+
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { User } from "lucide-react";
+import { api } from "@/trpc/react";
+import { useParams } from "next/navigation";
+import { AttendanceUserPopup } from "./attendance-user-popup";
+
+interface UserCardProps {
+  id: string;
+  name: string;
+  email: string;
+  image?: string | null;
+  isPresent: boolean;
+}
+
+const UserCard: React.FC<UserCardProps> = ({
+  id,
+  name,
+  email,
+  image,
+  isPresent,
+}) => {
+  const { subjectId } = useParams<{ subjectId: string }>();
+  const [present, setPresent] = useState(isPresent);
+
+  const utils = api.useUtils();
+
+  const { mutate } = api.attendance.create.useMutation({
+    onSuccess: async () => {
+      void utils.attendance.getTodaysAttendanceBySubjectId.invalidate();
+    },
+  });
+
+  const handleCheckboxChange = (checked: boolean) => {
+    setPresent(checked);
+    mutate({ userId: id, subjectId, date: new Date() });
+  };
+
+  return (
+    <Card className="flex w-full items-center justify-between px-6 py-4">
+      <div className="flex items-center gap-4">
+        {image ? (
+          <img
+            src={image}
+            className="size-[45px] overflow-clip rounded-full"
+            alt={`user-image-${id}`}
+          />
+        ) : (
+          <User className="size-[45px] rounded-full bg-muted p-[5px]" />
+        )}
+        <div className="flex flex-col gap-0">
+          <p className="text-md font-medium">{name}</p>
+          <p className="text-xs text-muted-foreground">{email}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-4">
+        <Checkbox checked={present} onCheckedChange={handleCheckboxChange} />
+        <AttendanceUserPopup userId={id} />
+      </div>
+    </Card>
+  );
+};
+
+export default UserCard;
