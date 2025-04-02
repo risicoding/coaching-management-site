@@ -36,15 +36,17 @@ import { convertToAMPM } from "@/lib/format-time";
 
 export const AddSubjectsDialog = ({
   children,
+  classId,
 }: {
   children: React.ReactNode;
+  classId?: string;
 }) => {
   return (
     <Dialog>
       <DialogTrigger>{children}</DialogTrigger>
-      <DialogContent className=" w-full px-3 sm:p-6 sm:w-3/4">
+      <DialogContent className="w-full px-3 sm:w-3/4 sm:p-6">
         <DialogTitle>Add new Subject</DialogTitle>
-        <AddSubjectForm />
+        <AddSubjectForm classId={classId} />
       </DialogContent>
     </Dialog>
   );
@@ -61,7 +63,7 @@ const formSchema = z.object({
     .optional(),
 });
 
-const AddSubjectForm = () => {
+const AddSubjectForm = ({ classId }: { classId?: string }) => {
   const ref = useRef<HTMLButtonElement | null>(null);
 
   const utils = api.useUtils();
@@ -78,7 +80,7 @@ const AddSubjectForm = () => {
     defaultValues: {
       name: "",
       pricing: undefined,
-      classId: undefined,
+      classId,
       days: daysEnum.options.filter((val) => val !== "sun"),
     },
   });
@@ -196,7 +198,7 @@ type ClassesSelectProps = {
   value: string | null | undefined;
   onBlur: () => void;
 };
-const ClassesSelect = ({ onChange, value  }: ClassesSelectProps) => {
+const ClassesSelect = ({ onChange, value }: ClassesSelectProps) => {
   const { data: classesData } = api.classes.getAll.useQuery();
 
   return (

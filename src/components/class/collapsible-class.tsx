@@ -8,6 +8,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ClassDropdown } from "./class-dropdown";
+import { AddSubjectsDialog } from "../subjects/add-subjects";
+import { Button } from "../ui/button";
+import { CirclePlus } from "lucide-react";
 
 interface CollapsibleClassProps {
   id: string;
@@ -26,6 +29,12 @@ export const CollapsibleClass: React.FC<CollapsibleClassProps> = ({
         <AccordionTrigger className="group p-4 text-left">
           Class {classNo}
           <div className="ml-auto mr-4 text-neutral-500">
+            <AddSubjectsDialog classId={id}>
+              <Button variant="ghost">
+                <CirclePlus />
+              </Button>
+            </AddSubjectsDialog>
+
             <ClassDropdown id={id} />
           </div>
         </AccordionTrigger>
@@ -36,4 +45,3 @@ export const CollapsibleClass: React.FC<CollapsibleClassProps> = ({
     </Accordion>
   );
 };
-

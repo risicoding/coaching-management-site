@@ -23,20 +23,18 @@ const Page = () => {
           id={classItem.id}
           classNo={classItem.classNumber}
         >
-          <div className='grid grid-cols-1 sm:grid-cols-3 gap-3'>
-
-          {subjectsData
-            ?.filter((itx) => itx.classId === classItem.id)
-            .map((subjectItem) => (
-              <SubjectCard
-                key={subjectItem.id}
-                name={subjectItem.name}
-                id={subjectItem.id}
-                time={subjectItem.time}
-                classNo={classItem.classNumber}
-              />
-            ))}
-
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {subjectsData
+              ?.filter((itx) => itx.classId === classItem.id)
+              .map((subjectItem) => (
+                <SubjectCard
+                  key={subjectItem.id}
+                  name={subjectItem.name}
+                  id={subjectItem.id}
+                  time={subjectItem.time}
+                  classNo={classItem.classNumber}
+                />
+              ))}
           </div>
         </CollapsibleClass>
       ))}
