@@ -62,11 +62,11 @@ const SignupForm = () => {
     logger.log(signUpData)
 
     if (redirectUrl) {
-      router.push(redirectUrl);
+      return router.push(redirectUrl);
     }
 
     const { data: session } = await authClient.getSession();
-    router.push(session?.user.role === "/admin" ? "/admin" : "/dashboard");
+    router.push(session?.user.role === "admin" ? "/admin" : "/dashboard");
   };
 
   return (

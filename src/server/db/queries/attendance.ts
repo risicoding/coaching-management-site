@@ -1,6 +1,6 @@
 import { db } from "@/server/db/db";
 import { attendance } from "@/server/db/schemas/attendance";
-import { and, count, eq, gte, lte } from "drizzle-orm";
+import { and, asc, count, eq, gte, lte, sql } from "drizzle-orm";
 
 export const attendanceQueries = {
   create: async (attendanceData: typeof attendance.$inferInsert) => {
@@ -19,35 +19,42 @@ export const attendanceQueries = {
     });
   },
 
-  getMonthlyAttendanceForUser: async (userId: string, subjectId: string) => {
-    const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastDayOfMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-      999,
-    );
+  getAttendanceByUserIdSubjectId: async (userId: string, subjectId: string) => {
+    const result = await db
+      .select()
+      .from(attendance)
+      .where(
+        and(eq(attendance.userId, userId), eq(attendance.subjectId, subjectId)),
+      )
+      .orderBy(asc(attendance.date));
 
+    return result;
+  },
+
+  getMonthlyAttendance: async (userId: string, subjectId: string) => {
+    return await db
+      .select()
+      .from(attendance)
+      .where(
+        sql`${attendance.userId} = ${userId} 
+      AND ${attendance.subjectId} = ${subjectId}
+      AND date_trunc('month', ${attendance.date}) = date_trunc('month', CURRENT_TIMESTAMP)`,
+      );
+  },
+
+  getMonthlyAttendanceCount: async (userId: string, subjectId: string) => {
     const result = await db
       .select({ count: count() })
       .from(attendance)
       .where(
-        and(
-          eq(attendance.userId, userId),
-          eq(attendance.subjectId, subjectId),
-          gte(attendance.date, firstDayOfMonth),
-          lte(attendance.date, lastDayOfMonth),
-        ),
+        sql`${attendance.userId} = ${userId} 
+      AND ${attendance.subjectId} = ${subjectId}
+      AND date_trunc('month', ${attendance.date}) = date_trunc('month', CURRENT_TIMESTAMP)`,
       );
-
     return result[0]?.count ?? 0;
   },
 
-  getTodaysAttendanceForSubject: async (subjectId: string) => {
+  getTodaysAttendanceBySubjectId: async (subjectId: string) => {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
@@ -86,6 +93,17 @@ export const attendanceQueries = {
     });
   },
 
+  getPresentCount: (subjectId: string) =>
+    db
+      .select({
+        date: attendance.date,
+        userCount: sql<number>`COUNT(DISTINCT ${attendance.userId})`,
+      })
+      .from(attendance)
+      .where(eq(attendance.subjectId, subjectId))
+      .groupBy(attendance.date)
+      .orderBy(attendance.date),
+
   update: async (
     id: string,
     attendanceData: Partial<typeof attendance.$inferInsert>,
@@ -97,7 +115,20 @@ export const attendanceQueries = {
       .returning();
   },
 
-  delete: async (id: string) => {
-    return await db.delete(attendance).where(eq(attendance.id, id)).returning();
+  delete: async ({
+    userId,
+    subjectId,
+    date,
+  }: typeof attendance.$inferInsert) => {
+    return await db
+      .delete(attendance)
+      .where(
+        and(
+          eq(attendance.userId, userId),
+          eq(attendance.subjectId, subjectId),
+          eq(attendance.date, date),
+        ),
+      )
+      .returning();
   },
 };

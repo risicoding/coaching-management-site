@@ -1,73 +1,89 @@
-import { format, isBefore, addDays, parseISO, isSameDay } from "date-fns";
+import { isBefore, format, addDays, isSameDay } from "date-fns";
 
-// Define the type for the input data
-interface InputData {
-  id: number | null;
-  date: string;
-}
+const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
-// Define the type for the transformed output
-interface TransformedData {
-  id: number | null;
-  date: string;
-  status: "present" | "absent";
-}
+type InputEntry = {
+  [key: string]: any;
+  date: Date;
+};
 
-// Utility function to format dates
-const formatDate = (date: Date): string => format(date, "yyyy-MM-dd");
+type InputData = InputEntry[];
 
-// Function to generate missing dates between start and end
-const generateDates = (startDate: Date, endDate: Date): Date[] => {
+type TransformedEntry = InputEntry & {
+  status: "present" | "absent" | "off";
+};
+
+type TransformedData = TransformedEntry[];
+
+const generateDateRange = (startDate: Date, endDate: Date): Date[] => {
   const dates: Date[] = [];
   let currentDate = startDate;
-
-  // Generate all dates in the range
   while (isBefore(currentDate, endDate) || isSameDay(currentDate, endDate)) {
     dates.push(currentDate);
     currentDate = addDays(currentDate, 1);
   }
-
   return dates;
 };
 
-// Transform function
-const transformData = (data: InputData[]): TransformedData[] => {
-  // Sort data by date
-  data.sort((a, b) => (isBefore(parseISO(a.date), parseISO(b.date)) ? -1 : 1));
+const transformData = (data: InputData): TransformedData => {
+  if (data.length === 0) return [];
 
-  // Get the earliest and latest date
-  const startDate = parseISO(data[0]!.date);
-  const endDate = parseISO(data[data.length - 1]!.date);
+  const startDate = data[0]!.date;
+  const endDate = new Date(); // Today's date
 
-  // Generate all dates between the start and end
-  const allDates = generateDates(startDate, endDate);
+  const dateMap = new Map(
+    data.map((entry) => [entry.date.toISOString().split("T")[0], entry]),
+  );
 
-  // Result array to hold transformed data
-  const result: TransformedData[] = [];
+  return generateDateRange(startDate, endDate).map((date) => {
+    const dateKey = date.toISOString().split("T")[0];
+    const existingEntry = dateMap.get(dateKey);
 
-  // Iterate over each date in the range
-  allDates.forEach((date) => {
-    const formattedDate = formatDate(date);
-
-    // Check if there is an entry for this date in the input data
-    const existingEntry = data.find((entry) => entry.date === formattedDate);
-
-    if (existingEntry) {
-      result.push({
-        id: existingEntry.id,
-        date: formattedDate,
-        status: "present",
-      });
-    } else {
-      result.push({
-        id: null,
-        date: formattedDate,
-        status: "absent",
-      });
-    }
+    return existingEntry
+      ? { ...existingEntry, status: "present" }
+      : {
+          id: null,
+          userId: data[0]?.userId,
+          subjectId: data[0]?.subjectId,
+          createdAt: null,
+          date,
+          status: "absent",
+        };
   });
-
-  return result;
 };
 
-export { transformData };
+const isWeekday = (date: Date, day: string) => {
+  return format(date, "EEE").toLowerCase() === day.toLowerCase();
+};
+
+const filterWeekdays = (
+  input: TransformedData,
+  days: string[],
+): TransformedData => {
+  return input.map((entry) =>
+    days.some((day) => isWeekday(entry.date, day))
+      ? entry
+      : { ...entry, status: entry.status === "present" ? "present" : "off" },
+  );
+};
+
+const getDaysInMonth = (
+  year: number,
+  month: number,
+  includeDays: string[] = days.filter((val) => val !== "sun"),
+) => {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  let count = 0;
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayOfWeek = new Date(year, month, day).getDay();
+    if (includeDays.includes(days[dayOfWeek]!)) {
+      count++;
+    }
+  }
+
+  return count;
+};
+
+export { transformData, getDaysInMonth, filterWeekdays, type TransformedData };

@@ -19,11 +19,10 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        menuActive: "bg-white text-black border-b border-black rounded-none",
-        disabled:'bg-neutral-500',
-        disabledOutline:'bg-white border-neutral-500'
+        disabled: "bg-neutral-500 text-neutral-500 shadow hover:bg-primary/90",
+        disabledOutline:
+          "border border-neutral-400 bg-background text-neutral-400 shadow-sm hover:bg-accent hover:text-accent-foreground",
       },
-
       size: {
         default: "h-9 px-4 py-2",
         sm: "h-8 rounded-md px-3 text-xs",
