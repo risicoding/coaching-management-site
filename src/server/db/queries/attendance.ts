@@ -93,6 +93,17 @@ export const attendanceQueries = {
     });
   },
 
+  getPresentCount: (subjectId: string) =>
+    db
+      .select({
+        date: attendance.date,
+        userCount: sql<number>`COUNT(DISTINCT ${attendance.userId})`,
+      })
+      .from(attendance)
+      .where(eq(attendance.subjectId, subjectId))
+      .groupBy(attendance.date)
+      .orderBy(attendance.date),
+
   update: async (
     id: string,
     attendanceData: Partial<typeof attendance.$inferInsert>,

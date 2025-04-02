@@ -136,6 +136,18 @@ export const attendanceRouter = createTRPCRouter({
       }
     }),
 
+  getPresentCount: adminProcedure.input(z.string()).query(async ({ input }) => {
+    try {
+      const result = await attendanceQueries.getPresentCount(input);
+      return result;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: (error as Error).message,
+      });
+    }
+  }),
+
   update: adminProcedure
     .input(
       z.object({
