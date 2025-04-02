@@ -4,7 +4,7 @@ import { api } from "@/trpc/react";
 import { SquareArrowOutUpRight, Loader } from "lucide-react";
 import { useParams } from "next/navigation";
 import { AttendanceCalendar } from "./attendance-calendar";
-import { getDaysInMonth, getDaysInMonthExcluding } from "@/lib/date";
+import { getDaysInMonth  } from "@/lib/date";
 import { CalendarNavButton } from "@/components/ui/calendar-nav-button";
 import { useState } from "react";
 import { isSameMonth } from "date-fns";
