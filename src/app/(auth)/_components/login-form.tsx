@@ -32,6 +32,7 @@ const LoginForm = () => {
     defaultValues: { email: "", password: "" },
   });
 
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     logger.log('Form data',data);
     const { data: signInData, error } = await authClient.signIn.email({
@@ -49,7 +50,7 @@ const LoginForm = () => {
     logger.log(signInData);
 
     if (redirectUrl) {
-      router.push(redirectUrl);
+    return  router.push(redirectUrl);
     }
 
     const { data: session } = await authClient.getSession();

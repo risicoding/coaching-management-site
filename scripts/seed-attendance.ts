@@ -4,6 +4,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { attendance } from "@/server/db/schemas";
 import { env } from "@/env";
 import * as schema from "@/server/db/schemas";
+import { generateMockAttendance } from "./mock-attendance";
 
 const globalForDb = globalThis as unknown as {
   conn: postgres.Sql | undefined;
@@ -17,34 +18,11 @@ if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 const db = drizzle(conn, { schema, logger: true });
 
 const userId = "zMZZcJOzohzxzJczuvg1Ra0ozUwKD9Hc"; // Replace with actual user ID
-const subjectId = "600e46a4-1ab7-430c-ba71-ddbf704981ca"; // Replace with actual subject ID
+const subjectId = "1e2d77f5-a477-497f-ad50-3acc8f50bd32"; // Replace with actual subject ID
 
-const generateRandomAttendance = () => {
-  const startDate = new Date("2025-01-01");
-  const endDate = new Date("2025-04-30");
-  const attendanceEntries = [];
-  const currentDate = new Date(startDate);
-
-  while (currentDate <= endDate) {
-    if (Math.random() < 0.7) {
-      // @ts-expect-error Nan
-      attendanceEntries.push({
-        userId,
-        subjectId,
-        date: new Date(currentDate), // Ensure unique dates
-      });
-    }
-
-    // Move to the next day (randomly skipping days)
-    const daysToSkip = Math.random() < 0.3 ? 2 : 1;
-    currentDate.setDate(currentDate.getDate() + daysToSkip);
-  }
-
-  return attendanceEntries;
-};
 
 const seedAttendance = async () => {
-  const attendanceData = generateRandomAttendance();
+  const attendanceData = generateMockAttendance(userId,subjectId,'2025-01-01',100);
 
   await db.insert(attendance).values(attendanceData);
   console.log("Attendance seeded successfully.");

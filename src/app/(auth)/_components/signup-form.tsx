@@ -62,7 +62,7 @@ const SignupForm = () => {
     logger.log(signUpData)
 
     if (redirectUrl) {
-      router.push(redirectUrl);
+      return router.push(redirectUrl);
     }
 
     const { data: session } = await authClient.getSession();

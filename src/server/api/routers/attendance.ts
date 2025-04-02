@@ -1,10 +1,14 @@
 import { TRPCError } from "@trpc/server";
 import { adminProcedure, privateProcedure } from "../trpc";
 import { attendanceQueries } from "@/server/db/queries/attendance";
-import { attendanceInsertSchema } from "@/server/db/schemas/zodSchemas";
+import {
+  attendanceInsertSchema,
+  daysEnum,
+} from "@/server/db/schemas/zodSchemas";
 import { createTRPCRouter } from "../trpc";
 import { z } from "zod";
-import { transformData } from "@/lib/date";
+import { filterWeekdays, transformData } from "@/lib/date";
+import { subjectsQueries } from "@/server/db/queries/subjects";
 
 export const attendanceRouter = createTRPCRouter({
   create: adminProcedure
@@ -65,11 +69,15 @@ export const attendanceRouter = createTRPCRouter({
     .input(z.object({ userId: z.string(), subjectId: z.string() }))
     .query(async ({ input }) => {
       try {
+        const subject = await subjectsQueries.getById(input.subjectId);
         const result = await attendanceQueries.getAttendanceByUserIdSubjectId(
           input.userId,
           input.subjectId,
         );
-        return transformData(result);
+        return filterWeekdays(
+          transformData(result),
+          subject?.days ?? daysEnum.options.filter((val) => val !== "sun"),
+        );
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -77,6 +85,41 @@ export const attendanceRouter = createTRPCRouter({
         });
       }
     }),
+
+  getMonthlyAttendance: adminProcedure
+    .input(z.object({ userId: z.string(), subjectId: z.string() }))
+    .query(async ({ input }) => {
+      try {
+        const result =await attendanceQueries.getMonthlyAttendance(
+          input.userId,
+          input.subjectId,
+        );
+        return result;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: (error as Error).message,
+        });
+      }
+    }),
+
+  getMonthlyAttendanceCount: adminProcedure
+    .input(z.object({ userId: z.string(), subjectId: z.string() }))
+    .query(async ({ input }) => {
+      try {
+        const result =await attendanceQueries.getMonthlyAttendanceCount(
+          input.userId,
+          input.subjectId,
+        );
+        return result;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: (error as Error).message,
+        });
+      }
+    }),
+
 
   getTodaysAttendanceBySubjectId: adminProcedure
     .input(z.string())

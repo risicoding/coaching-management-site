@@ -9,7 +9,7 @@
 }
 
 .react-calendar__navigation button {
-  @apply h-7 w-7  p-0 opacity-50 hover:opacity-100 rounded-md;
+  @apply h-7 w-7 p-0 opacity-50 hover:opacity-100 rounded-md;
 }
 
 /* Calendar Table */
@@ -18,7 +18,7 @@
 }
 
 .react-calendar__month-view {
-  @apply space-y-9;
+  @apply space-y-3;
 }
 
 .react-calendar__month-view__weekdays {
@@ -31,12 +31,12 @@
 
 /* Calendar Days */
 .react-calendar__tile {
-  @apply relative flex px-1 py-3 items-center justify-center m-1.5 rounded-md text-black text-xs transition-all;
+  @apply relative flex px-1 py-3 items-center justify-center rounded-xl text-black text-xs transition-all;
 }
 
 /* Increase spacing between rows */
 .react-calendar__month-view__days {
-  @apply gap-x-2 gap-y-1 grid grid-cols-7; /* Ensures equal spacing */
+  @apply  grid grid-cols-7; /* Ensures equal spacing */
 }
 
 .react-calendar__tile--now {
@@ -44,9 +44,11 @@
 }
 
 .react-calendar__tile--active {
-  @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  @apply before:w-[90%] before:h-[90%] before:absolute before:bg-primary rounded-md before:z-10 p-2 
 }
-
+.react-calendar__tile--active * {
+  @apply z-20
+}
 .react-calendar__tile--hasActive {
   @apply bg-primary/50 text-primary-foreground;
 }
@@ -60,13 +62,35 @@
 }
 
 /* Custom Attendance Colors */
+.present-day * { 
+@apply z-20
+}
+
 .present-day {
-  @apply bg-green-200 ring-1 ring-black shadow rounded-lg text-black
+  @apply text-black z-20 p-2 relative flex items-center justify-center before:h-[90%] before:absolute  before:w-[90%] before:bg-green-200  before:rounded-md before:z-[1] 
+
+}
+
+
+.absent-day * { 
+@apply z-20
 }
 
 .absent-day {
-  @apply bg-red-200 ring-1 ring-black shadow rounded-lg text-black
+  @apply text-black z-20 p-2 relative flex items-center justify-center before:h-[90%] before:absolute  before:w-[90%] before:bg-red-200  before:rounded-md before:z-[1] 
+
 }
+
+.off-day *{
+  @apply z-20
+}
+
+.off-day{
+  @apply text-black z-20 p-2 relative flex items-center justify-center before:h-[90%] before:absolute  before:w-[90%] before:bg-neutral-200  before:rounded-md before:z-[1] 
+
+}
+
+
 
 /* Disabled & Outside Days */
 .react-calendar__tile--disabled {

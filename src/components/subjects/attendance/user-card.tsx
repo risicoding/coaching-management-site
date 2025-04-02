@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { User } from "lucide-react";
 import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
-import { AttendanceUserPopup } from "./attendance-user-popup";
+import { UserAttendanceDialog } from "./user-attendance-dialog";
 
 interface UserCardProps {
   id: string;
@@ -30,7 +30,7 @@ const UserCard: React.FC<UserCardProps> = ({
 
   const { mutate } = api.attendance.create.useMutation({
     onSuccess: async () => {
-      void utils.attendance.getTodaysAttendanceBySubjectId.invalidate();
+      void utils.attendance.invalidate();
     },
   });
 
@@ -49,7 +49,7 @@ const UserCard: React.FC<UserCardProps> = ({
             alt={`user-image-${id}`}
           />
         ) : (
-          <User className="size-[45px] rounded-full bg-muted p-[5px]" />
+          <User className="size-[45px] rounded-full bg-muted p-[7px] text-neutral-600" />
         )}
         <div className="flex flex-col gap-0">
           <p className="text-md font-medium">{name}</p>
@@ -58,7 +58,7 @@ const UserCard: React.FC<UserCardProps> = ({
       </div>
       <div className="flex items-center gap-4">
         <Checkbox checked={present} onCheckedChange={handleCheckboxChange} />
-        <AttendanceUserPopup userId={id} />
+        <UserAttendanceDialog userId={id} />
       </div>
     </Card>
   );
