@@ -13,6 +13,7 @@ export const AttendanceMenuCard = () => {
   const { data: attendanceData } =
     api.attendance.getTodaysAttendanceBySubjectId.useQuery(subjectId);
 
+
   return (
     <Card>
       <CardHeader>

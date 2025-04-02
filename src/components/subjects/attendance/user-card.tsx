@@ -28,15 +28,25 @@ const UserCard: React.FC<UserCardProps> = ({
 
   const utils = api.useUtils();
 
-  const { mutate } = api.attendance.create.useMutation({
+  const { mutate: createAttendance } = api.attendance.create.useMutation({
     onSuccess: async () => {
-      void utils.attendance.invalidate();
+      await utils.attendance.invalidate();
+    },
+  });
+
+  const { mutate: deleteAttendance } = api.attendance.delete.useMutation({
+    onSuccess: async () => {
+      await utils.attendance.invalidate();
     },
   });
 
   const handleCheckboxChange = (checked: boolean) => {
     setPresent(checked);
-    mutate({ userId: id, subjectId, date: new Date() });
+    if (checked) {
+      createAttendance({ userId: id, subjectId, date: new Date() });
+    } else {
+      deleteAttendance({ userId: id, subjectId, date: new Date() });
+    }
   };
 
   return (

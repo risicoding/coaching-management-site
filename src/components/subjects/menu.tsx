@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,8 +15,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AttendanceMenuCard } from "./attendance/attendance-menu-card";
 
 export const SubjectsMenu = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Use search param as initial tab value
+  const initialTab = searchParams.get("tab") ?? "home";
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  // Update URL when tab changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    params.set("tab", activeTab);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [activeTab, searchParams, router]);
+
   return (
-    <Tabs defaultValue="home" className="space-y 6 overflow-scroll">
+    <Tabs
+      value={activeTab}
+      onValueChange={setActiveTab}
+      className="space-y-6 overflow-scroll"
+    >
       <TabsList>
         <TabsTrigger value="home">Home</TabsTrigger>
         <TabsTrigger value="attendance">Attendance</TabsTrigger>
@@ -33,7 +55,7 @@ export const SubjectsMenu = () => {
 
       <TabsContent value="tests">
         <MenuCard header="Tests" description="Check your test results.">
-          <p>Test infgoes here.</p>
+          <p>Test info goes here.</p>
         </MenuCard>
       </TabsContent>
 

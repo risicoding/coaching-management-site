@@ -29,7 +29,7 @@ const transformData = (data: InputData): TransformedData => {
   if (data.length === 0) return [];
 
   const startDate = data[0]!.date;
-  const endDate = data[data.length - 1]!.date;
+  const endDate = new Date(); // Today's date
 
   const dateMap = new Map(
     data.map((entry) => [entry.date.toISOString().split("T")[0], entry]),

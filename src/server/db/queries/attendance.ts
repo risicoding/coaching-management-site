@@ -31,7 +31,7 @@ export const attendanceQueries = {
     return result;
   },
 
-  getMonthlyAttendance: async (userId: string, subjectId) => {
+  getMonthlyAttendance: async (userId: string, subjectId: string) => {
     return await db
       .select()
       .from(attendance)
@@ -42,7 +42,7 @@ export const attendanceQueries = {
       );
   },
 
-  getMonthlyAttendanceCount: async (userId: string, subjectId) => {
+  getMonthlyAttendanceCount: async (userId: string, subjectId: string) => {
     const result = await db
       .select({ count: count() })
       .from(attendance)
@@ -104,7 +104,20 @@ export const attendanceQueries = {
       .returning();
   },
 
-  delete: async (id: string) => {
-    return await db.delete(attendance).where(eq(attendance.id, id)).returning();
+  delete: async ({
+    userId,
+    subjectId,
+    date,
+  }: typeof attendance.$inferInsert) => {
+    return await db
+      .delete(attendance)
+      .where(
+        and(
+          eq(attendance.userId, userId),
+          eq(attendance.subjectId, subjectId),
+          eq(attendance.date, date),
+        ),
+      )
+      .returning();
   },
 };

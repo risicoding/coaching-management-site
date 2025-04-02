@@ -1,5 +1,12 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
+import {
+  date,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 import { subjects } from "./subjects";
 
@@ -13,7 +20,7 @@ export const attendance = pgTable(
     subjectId: uuid("subject_id")
       .notNull()
       .references(() => subjects.id, { onDelete: "cascade" }),
-    date: timestamp("date", { withTimezone: true }).notNull(),
+    date: date("date", { mode: "date" }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

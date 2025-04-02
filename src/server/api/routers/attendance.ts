@@ -90,7 +90,7 @@ export const attendanceRouter = createTRPCRouter({
     .input(z.object({ userId: z.string(), subjectId: z.string() }))
     .query(async ({ input }) => {
       try {
-        const result =await attendanceQueries.getMonthlyAttendance(
+        const result = await attendanceQueries.getMonthlyAttendance(
           input.userId,
           input.subjectId,
         );
@@ -107,7 +107,7 @@ export const attendanceRouter = createTRPCRouter({
     .input(z.object({ userId: z.string(), subjectId: z.string() }))
     .query(async ({ input }) => {
       try {
-        const result =await attendanceQueries.getMonthlyAttendanceCount(
+        const result = await attendanceQueries.getMonthlyAttendanceCount(
           input.userId,
           input.subjectId,
         );
@@ -119,7 +119,6 @@ export const attendanceRouter = createTRPCRouter({
         });
       }
     }),
-
 
   getTodaysAttendanceBySubjectId: adminProcedure
     .input(z.string())
@@ -163,22 +162,25 @@ export const attendanceRouter = createTRPCRouter({
       }
     }),
 
-  delete: adminProcedure.input(z.string()).mutation(async ({ input }) => {
-    try {
-      const deleted = await attendanceQueries.delete(input);
-      if (!deleted) {
+  delete: adminProcedure
+    .input(attendanceInsertSchema)
+    .mutation(async ({ input }) => {
+      try {
+        const deleted = await attendanceQueries.delete(input);
+        if (!deleted) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Attendance record not found",
+          });
+        }
+        console.log(deleted);
+        return deleted;
+      } catch (error) {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Attendance record not found",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to delete attendance record",
+          cause: error,
         });
       }
-      return deleted;
-    } catch (error) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to delete attendance record",
-        cause: error,
-      });
-    }
-  }),
+    }),
 });
