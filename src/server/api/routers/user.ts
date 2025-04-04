@@ -9,7 +9,8 @@ export const userRouter = createTRPCRouter({
     .query(async ({ input }) => {
       try {
         const result = await userSubjectQueries.getUsersInSubject(input);
-        return result;
+
+        return result.length > 0 ? result : undefined;
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

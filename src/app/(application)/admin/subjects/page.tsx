@@ -1,7 +1,6 @@
 "use client";
 
 import { AddSubjectsDialog } from "@/components/subjects/add-subjects";
-
 import React from "react";
 import { api } from "@/trpc/react";
 import { SubjectCard } from "@/components/subjects/subject-card";
@@ -38,7 +37,7 @@ const SubjectsInfoBar = () => {
             <SubjectCard
               name={itx.name}
               id={itx.id}
-              time={itx.name}
+              time={itx.time}
               classNo={
                 utils.classes.getAll
                   .getData()

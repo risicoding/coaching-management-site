@@ -9,10 +9,12 @@ import { UserCardSkeleton } from "@/components/skeleton/user-card";
 export const AttendanceMenuCard = () => {
   const { subjectId } = useParams<{ subjectId: string }>();
 
-  const { data: userData } = api.users.getUsersBySubjectId.useQuery(subjectId);
-  const { data: attendanceData } =
+  const { data: userData, isLoading: userIsLoading } =
+    api.users.getUsersBySubjectId.useQuery(subjectId);
+  const { data: attendanceData, isLoading: attendanceIsLoading } =
     api.attendance.getTodaysAttendanceBySubjectId.useQuery(subjectId);
 
+  const isLoading = userIsLoading || attendanceIsLoading;
 
   return (
     <Card>
@@ -20,19 +22,25 @@ export const AttendanceMenuCard = () => {
         <CardTitle>Attendance</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {userData && attendanceData ? (
-          userData?.map((user) => (
-            <UserCard
-              key={user.id}
-              id={user.id}
-              name={user.name}
-              email={user.email}
-              image={user.image}
-              isPresent={attendanceData.some(
-                (attendance) => attendance.userId === user.id,
-              )}
-            />
-          ))
+        {!isLoading ? (
+          userData ? (
+            userData.map((user) => (
+              <UserCard
+                key={user.id}
+                id={user.id}
+                name={user.name}
+                email={user.email}
+                image={user.image}
+                isPresent={
+                  attendanceData?.some(
+                    (attendance) => attendance.userId === user.id,
+                  ) ?? false
+                }
+              />
+            ))
+          ) : (
+            <p className="text-center text-muted-foreground">No users found</p>
+          )
         ) : (
           <div className="space-y-4">
             <UserCardSkeleton />
@@ -44,64 +52,3 @@ export const AttendanceMenuCard = () => {
     </Card>
   );
 };
-
-{
-  /* <div className="space-y-4"> */
-}
-{
-  /*   <div className="flex gap-4"> */
-}
-{
-  /*     <Card className="h-28 w-full"> */
-}
-{
-  /*       <CardContent></CardContent> */
-}
-{
-  /*     </Card> */
-}
-{
-  /*     <Card className="h-28 w-full"> */
-}
-{
-  /*       <CardContent></CardContent> */
-}
-{
-  /*     </Card> */
-}
-{
-  /*   </div> */
-}
-{
-  /*   <Card> */
-}
-{
-  /*     <CardContent className="flex items-center justify-center"> */
-}
-{
-  /*       <AttendanceCalendar */
-}
-{
-  /*         attendanceData={[ */
-}
-{
-  /*           { date: "2024-04-01", status: "present" }, */
-}
-{
-  /*           { date: "2024-04-05", status: "present" }, */
-}
-{
-  /*         ]} */
-}
-{
-  /*       /> */
-}
-{
-  /*     </CardContent> */
-}
-{
-  /*   </Card> */
-}
-{
-  /* </div> */
-}

@@ -38,6 +38,20 @@ const Page = () => {
           </div>
         </CollapsibleClass>
       ))}
+      <CollapsibleClass>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {subjectsData
+            ?.filter((itx) => itx.classId === null)
+            .map((itx) => (
+              <SubjectCard
+                key={itx.id}
+                name={itx.name}
+                id={itx.id}
+                time={itx.time}
+              />
+            ))}
+        </div>
+      </CollapsibleClass>
     </div>
   );
 };
