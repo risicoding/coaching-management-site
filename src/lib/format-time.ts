@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 
 export function convertToAMPM(timeString: string) {
+  console.log(timeString)
   const [hour, minute] = timeString.split(":").map(Number);
 
   // Create a Date object using the current date and the provided time

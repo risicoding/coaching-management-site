@@ -8,6 +8,7 @@ import { api } from "@/trpc/react";
 import { env } from "@/env";
 import { toast } from "sonner";
 import { SubjectsMenu } from "@/components/subjects/menu";
+import { EditSubjectsDialog } from "@/components/subjects/edit-subject";
 
 const Page = () => {
   const params = useParams<{ subjectId: string }>();
@@ -34,10 +35,12 @@ const Page = () => {
     <div className="space-y-6">
       <InfoBar Icon={LayoutList} header={data?.name ?? "loading"}>
         <div className="flex gap-2">
+          <EditSubjectsDialog subjectId={subjectId}>
           <Button variant="outline">
             Edit
             <Pen />
           </Button>
+          </EditSubjectsDialog>
           <Button onClick={handleCopyLink}>
             Copy link <Clipboard />
           </Button>
