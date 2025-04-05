@@ -1,5 +1,5 @@
 {
-  "id": "f8450dbd-d8c4-4661-9ad0-216fcd07b7b8",
+  "id": "22a0e356-1098-4f13-8d18-dea1a31b569b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -29,16 +29,9 @@
         },
         "date": {
           "name": "date",
-          "type": "timestamp with time zone",
+          "type": "date",
           "primaryKey": false,
           "notNull": true
-        },
-        "is_present": {
-          "name": "is_present",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
         },
         "created_at": {
           "name": "created_at",
@@ -483,6 +476,18 @@
         "class_id": {
           "name": "class_id",
           "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "days": {
+          "name": "days",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time": {
+          "name": "time",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },

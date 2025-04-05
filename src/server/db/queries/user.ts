@@ -36,6 +36,6 @@ export const userQueries = {
     return await db
       .select({ ...rest })
       .from(user)
-      .where(eq(user.role, "user"));
+      .where(eq(user.role, "student"));
   },
 };
