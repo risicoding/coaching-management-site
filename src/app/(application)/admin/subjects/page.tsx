@@ -19,7 +19,7 @@ const Page = () => {
 
 const SubjectsInfoBar = () => {
   const { data } = api.subjects.getAll.useQuery();
-  const utils = api.useUtils();
+  const { data: classes } = api.classes.getAll.useQuery();
 
   return (
     <div className="space-y-6">
@@ -39,9 +39,8 @@ const SubjectsInfoBar = () => {
               id={itx.id}
               time={itx.time}
               classNo={
-                utils.classes.getAll
-                  .getData()
-                  ?.find((item) => item.id === itx.classId)?.classNumber ?? null
+                classes?.find((item) => item.id === itx.classId)?.classNumber ??
+                null
               }
             />
           </Link>

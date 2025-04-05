@@ -51,6 +51,7 @@ const formSchema = subjectInsertSchema
     pricing: z.coerce.number(),
     time: z.string(),
     days: z.array(daysEnum),
+    classId: z.string().optional(),
   })
   .omit({ createdAt: true, updatedAt: true, id: true });
 
@@ -74,7 +75,7 @@ const EditSubjectForm = ({ subjectId }: { subjectId: string }) => {
       name: subjectData?.name,
       pricing: subjectData?.pricing,
       days: subjectData?.days,
-      classId: subjectData?.classId,
+      classId: subjectData?.classId ?? "other",
       time: subjectData?.time ?? undefined,
     },
   });
@@ -85,7 +86,10 @@ const EditSubjectForm = ({ subjectId }: { subjectId: string }) => {
     console.log(data);
     await mutateAsync({
       id: subjectId,
-      data,
+      data: {
+        ...data,
+        classId: data.classId === "other" ? null : data.classId,
+      },
     });
   };
 

@@ -46,11 +46,14 @@ export const AddSubjectsDialog = ({
   );
 };
 
-const formSchema = subjectInsertSchema.extend({
-  pricing: z.coerce.number(),
-  time: z.string().transform((val) => convertToAMPM(val)),
-  days: z.array(daysEnum),
-});
+const formSchema = subjectInsertSchema
+  .extend({
+    pricing: z.coerce.number(),
+    time: z.string().transform((val) => convertToAMPM(val)),
+    days: z.array(daysEnum),
+    classId: z.string().optional(),
+  })
+  .omit({ createdAt: true, updatedAt: true, id: true });
 
 const AddSubjectForm = ({ classId }: { classId?: string }) => {
   const ref = useRef<HTMLButtonElement | null>(null);
@@ -76,7 +79,10 @@ const AddSubjectForm = ({ classId }: { classId?: string }) => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
-    await mutateAsync(data);
+    await mutateAsync({
+      ...data,
+      classId: data.classId === "other" ? null : data.classId,
+    });
   };
 
   return (

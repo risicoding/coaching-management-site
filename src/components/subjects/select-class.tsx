@@ -27,6 +27,7 @@ export const SelectClass = ({ onChange, value }: SelectClassProps) => {
             value={itx.id}
           >{`Class ${itx.classNumber}`}</SelectItem>
         ))}
+        <SelectItem value="other">Other</SelectItem>
       </SelectContent>
     </Select>
   );

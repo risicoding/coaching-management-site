@@ -19,7 +19,7 @@ export const SubjectCard = ({ name, time, id, classNo }: SubjectCardProps) => {
     <Card className="overflow-hidden transition-all hover:shadow-md">
       <CardHeader className="bg-primary/5 pb-2">
         <CardTitle className="text-lg font-medium">{name}</CardTitle>
-        {classNo && <CardDescription>Class:{classNo}</CardDescription>}
+        <CardDescription>Class:{classNo ?? "other"}</CardDescription>
       </CardHeader>
       <CardContent className="pt-4">
         <div className="flex items-center gap-2 text-sm">

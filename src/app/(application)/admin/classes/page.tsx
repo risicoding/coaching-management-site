@@ -9,6 +9,7 @@ import { AddClassForm } from "@/components/class/add-class";
 import { CollapsibleClass } from "@/components/class/collapsible-class";
 import { SubjectCard } from "@/components/subjects/subject-card";
 import { api } from "@/trpc/react";
+import Link from "next/link";
 
 const Page = () => {
   const { data: classesData } = api.classes.getAll.useQuery();
@@ -27,18 +28,23 @@ const Page = () => {
             {subjectsData
               ?.filter((itx) => itx.classId === classItem.id)
               .map((subjectItem) => (
-                <SubjectCard
+                <Link
+                  href={`/admin/subjects/${subjectItem.id}`}
                   key={subjectItem.id}
-                  name={subjectItem.name}
-                  id={subjectItem.id}
-                  time={subjectItem.time}
-                  classNo={classItem.classNumber}
-                />
+                >
+                  <SubjectCard
+                    key={subjectItem.id}
+                    name={subjectItem.name}
+                    id={subjectItem.id}
+                    time={subjectItem.time}
+                    classNo={classItem.classNumber}
+                  />
+                </Link>
               ))}
           </div>
         </CollapsibleClass>
       ))}
-      <CollapsibleClass>
+      <CollapsibleClass key="other" id="other">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {subjectsData
             ?.filter((itx) => itx.classId === null)
