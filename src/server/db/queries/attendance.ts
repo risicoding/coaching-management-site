@@ -14,9 +14,10 @@ export const attendanceQueries = {
   },
 
   getBySubjectId: async (id: string) => {
-    return await db.query.attendance.findMany({
+    const res = await db.query.attendance.findMany({
       where: eq(attendance.subjectId, id),
     });
+    return res.length > 0 ? res : undefined;
   },
 
   getAttendanceByUserIdSubjectId: async (userId: string, subjectId: string) => {

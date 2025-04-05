@@ -25,63 +25,71 @@ import { api } from "@/trpc/react";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { daysEnum, subjectInsertSchema } from "@/server/db/schemas";
 import { WeekdayPicker } from "./week-day-picker";
-import { convertToAMPM } from "@/lib/format-time";
 import { SelectClass } from "./select-class";
 
-export const AddSubjectsDialog = ({
+export const EditSubjectsDialog = ({
   children,
-  classId,
+  subjectId,
 }: {
   children: React.ReactNode;
-  classId?: string;
+  subjectId: string;
 }) => {
   return (
     <Dialog>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent className="w-full px-3 sm:w-3/4 sm:p-6">
-        <DialogTitle>Add new Subject</DialogTitle>
-        <AddSubjectForm classId={classId} />
+        <DialogTitle>Edit Subject</DialogTitle>
+        <EditSubjectForm subjectId={subjectId} />
       </DialogContent>
     </Dialog>
   );
 };
 
 const formSchema = subjectInsertSchema
+  .partial()
   .extend({
     pricing: z.coerce.number(),
-    time: z.string().transform((val) => convertToAMPM(val)),
+    time: z.string(),
     days: z.array(daysEnum),
     classId: z.string().optional(),
   })
   .omit({ createdAt: true, updatedAt: true, id: true });
 
-const AddSubjectForm = ({ classId }: { classId?: string }) => {
+const EditSubjectForm = ({ subjectId }: { subjectId: string }) => {
   const ref = useRef<HTMLButtonElement | null>(null);
-
   const utils = api.useUtils();
-  void utils.classes.getAll.prefetch();
 
-  const { mutateAsync } = api.subjects.create.useMutation({
+  const { data: subjectData, isLoading } =
+    api.subjects.getById.useQuery(subjectId);
+
+  const { mutateAsync } = api.subjects.update.useMutation({
     onSuccess: async () => {
-      void utils.subjects.getAll.invalidate();
+      void utils.subjects.getById.invalidate();
       ref.current?.click();
     },
   });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      pricing: undefined,
-      classId,
-      days: daysEnum.options.filter((val) => val !== "sun"),
+      name: subjectData?.name,
+      pricing: subjectData?.pricing,
+      days: subjectData?.days,
+      classId: subjectData?.classId ?? "other",
+      time: subjectData?.time ?? undefined,
     },
   });
+
+  const disabled = isLoading || form.formState.isSubmitting;
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
     await mutateAsync({
-      ...data,
-      classId: data.classId === "other" ? null : data.classId,
+      id: subjectId,
+      data: {
+        ...data,
+        classId: data.classId === "other" ? null : data.classId,
+      },
     });
   };
 
@@ -93,13 +101,9 @@ const AddSubjectForm = ({ classId }: { classId?: string }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Subject name</FormLabel>
+              <FormLabel>Subject Name</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter subject name"
-                  {...field}
-                  disabled={form.formState.isSubmitting}
-                />
+                <Input {...field} disabled={disabled} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -113,17 +117,11 @@ const AddSubjectForm = ({ classId }: { classId?: string }) => {
             <FormItem>
               <FormLabel>Pricing</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Enter pricing"
-                  disabled={form.formState.isSubmitting}
-                  type="number"
-                />
+                <Input {...field} type="number" disabled={disabled} />
               </FormControl>
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="classId"
@@ -148,15 +146,12 @@ const AddSubjectForm = ({ classId }: { classId?: string }) => {
             <FormItem>
               <FormLabel>Days</FormLabel>
               <FormControl>
-                <WeekdayPicker
-                  onChange={field.onChange}
-                  value={field.value}
-                  disabled={form.formState.isSubmitting}
-                />
+                <WeekdayPicker {...field} disabled={disabled} />
               </FormControl>
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="time"
@@ -164,22 +159,17 @@ const AddSubjectForm = ({ classId }: { classId?: string }) => {
             <FormItem>
               <FormLabel>Time (optional)</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Select time"
-                  type="time"
-                  disabled={form.formState.isSubmitting}
-                  {...field}
-                />
+                <Input {...field} type="time" disabled={disabled} />
               </FormControl>
             </FormItem>
           )}
         />
 
-        <Button type="submit" disabled={form.formState.isSubmitting}>
+        <Button type="submit" disabled={disabled}>
           {form.formState.isSubmitting ? (
             <Loader className="animate-spin" />
           ) : (
-            "Add Subject"
+            "Update Subject"
           )}
         </Button>
         <DialogClose className="hidden" ref={ref} />

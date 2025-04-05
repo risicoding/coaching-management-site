@@ -9,8 +9,8 @@ import { Clock } from "lucide-react";
 
 export interface SubjectCardProps {
   name: string;
-  classNo?: number | null
-  time?: string|null;
+  classNo?: number | null;
+  time?: string | null;
   id: string;
 }
 
@@ -24,7 +24,7 @@ export const SubjectCard = ({ name, time, id, classNo }: SubjectCardProps) => {
       <CardContent className="pt-4">
         <div className="flex items-center gap-2 text-sm">
           <Clock className="h-4 w-4 text-primary" />
-          <span>{time}</span>
+          <span>{time ?? "N/A"}</span>
         </div>
       </CardContent>
     </Card>

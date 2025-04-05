@@ -159,7 +159,7 @@ export const subjectsRouter = createTRPCRouter({
       } catch (error) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to update subject",
+          message: (error as Error).message,
           cause: error,
         });
       }

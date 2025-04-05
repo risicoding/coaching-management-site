@@ -14,7 +14,7 @@ export const subjectsQueries = {
     }),
   getAll: () =>
     db.query.subjects.findMany({
-      orderBy: (subjects, { desc}) => [desc(subjects.createdAt)],
+      orderBy: (subjects, { desc }) => [desc(subjects.createdAt)],
     }),
 
   getByClassId: (classId: string) =>
@@ -29,8 +29,8 @@ export const subjectsQueries = {
       .innerJoin(subjects, eq(userSubject.subjectId, subjects.id))
       .where(eq(userSubject.userId, userId)),
 
-  update: (id: string, subjectData: Partial<typeof subjects.$inferInsert>) =>
-    db.update(subjects).set(subjectData).where(eq(subjects.id, id)).returning(),
+  update: (id: string, data: Partial<z.infer<typeof subjectInsertSchema>>) =>
+    db.update(subjects).set(data).where(eq(subjects.id, id)).returning(),
 
   delete: (id: string) =>
     db.delete(subjects).where(eq(subjects.id, id)).returning(),
