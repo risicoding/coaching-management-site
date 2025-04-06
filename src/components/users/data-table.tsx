@@ -6,6 +6,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -21,6 +22,16 @@ import { useEffect, useState } from "react";
 
 import { RoleFilter, type TRoleFilter } from "./role-filter";
 import { InputFilter, type TInputFilter } from "./input-filter";
+import { Button } from "../ui/button";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { RowBulkAction } from "./row-bulk-action";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -44,6 +55,7 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       columnFilters,
       rowSelection,
@@ -78,6 +90,16 @@ export function DataTable<TData, TValue>({
             }
           />
         </div>
+        {table.getSelectedRowModel().rows.length > 0 && (
+          <div className="flex gap-2">
+            <RowBulkAction
+              reset={table.resetRowSelection}
+              ids={table
+                .getSelectedRowModel()
+                .rows.map((row) => (row.original as { id: string }).id)}
+            />
+          </div>
+        )}
       </div>
 
       <div className="rounded-md border">
@@ -129,6 +151,44 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-between p-4">
+        <div className="ml-auto flex gap-6">
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={(value) => table.setPageSize(Number(value))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="No of rows" />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <SelectItem key={i} value={`${(i + 1) * 10}`}>
+                  {(i + 1) * 10}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <FaChevronLeft />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <FaChevronRight />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

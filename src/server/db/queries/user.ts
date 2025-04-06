@@ -1,4 +1,4 @@
-import { eq, getTableColumns } from "drizzle-orm";
+import { eq, getTableColumns, inArray } from "drizzle-orm";
 import { db } from "../db";
 import { user } from "../schemas";
 
@@ -37,5 +37,20 @@ export const userQueries = {
       .select({ ...rest })
       .from(user)
       .where(eq(user.role, "student"));
+  },
+
+  delete: async (ids: string[]) => {
+    return await db
+      .delete(user)
+      .where(inArray(user.id, ids))
+      .returning({ id: user.id });
+  },
+
+  setRole: async (ids: string[], role: "admin" | "student") => {
+    return await db
+      .update(user)
+      .set({ role })
+      .where(inArray(user.id, ids))
+      .returning({ id: user.id, role: user.role });
   },
 };

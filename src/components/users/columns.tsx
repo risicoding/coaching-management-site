@@ -4,8 +4,7 @@ import type { inferRouterOutputs } from "@trpc/server";
 import { User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { UserDropdown } from "./dropdown";
-import { RoleFilter } from "./data-table";
+import { RowAction } from "./row-action";
 import { FaUser, FaUserShield } from "react-icons/fa6";
 import { Checkbox } from "../ui/checkbox";
 import { TRoleFilter } from "./role-filter";
@@ -59,15 +58,11 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "role",
     header: "Role",
-    filterFn: (row, columnId, filterValue: TRoleFilter) =>filterValue?.includes(row.getValue('role'))    ,
+    filterFn: (row, columnId, filterValue: TRoleFilter) =>
+      filterValue?.includes(row.getValue("role")),
 
     cell: ({ row }) => (
-      <Badge
-      
-        className={cn(
-          "capitalize",
-        )}
-      >
+      <Badge className={cn("capitalize")}>
         {row.getValue("role")}
         {row.getValue("role") === "admin" ? (
           <FaUserShield className="ml-2" />
@@ -80,7 +75,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "actions",
     cell: ({ row }) => {
-      return <UserDropdown id={row.getValue("id")} />;
+      return <RowAction id={row.original.id} />;
     },
     header: undefined,
   },
