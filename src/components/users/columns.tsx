@@ -8,6 +8,7 @@ import { UserDropdown } from "./dropdown";
 import { RoleFilter } from "./data-table";
 import { FaUser, FaUserShield } from "react-icons/fa6";
 import { Checkbox } from "../ui/checkbox";
+import { TRoleFilter } from "./role-filter";
 
 export type User = inferRouterOutputs<AppRouter>["users"]["getAll"][0];
 
@@ -58,15 +59,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "role",
     header: "Role",
-    filterFn: (row, columnId, filterValue: RoleFilter) => {
-      const value = row.getValue("role");
-
-      if (filterValue === "none") return false;
-      if (filterValue === undefined) return true;
-
-      if (value === filterValue) return true;
-      return false;
-    },
+    filterFn: (row, columnId, filterValue: TRoleFilter) =>filterValue?.includes(row.getValue('role'))    ,
 
     cell: ({ row }) => (
       <Badge

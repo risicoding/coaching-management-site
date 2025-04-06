@@ -2,7 +2,7 @@
 
 import {
   type ColumnDef,
-  ColumnFiltersState,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -17,22 +17,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEffect, useState } from "react";
 
-import { Input } from "../ui/input";
-
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-} from "@/components/ui/dropdown-menu";
-
-import { useCallback, useState } from "react";
-import { Button } from "../ui/button";
-import { FaUsers } from "react-icons/fa";
-import { IoIosOptions, IoIosSettings } from "react-icons/io";
-import { Select, SelectContent, SelectItem, SelectValue } from "../ui/select";
-import { SelectTrigger } from "@radix-ui/react-select";
+import { RoleFilter, type TRoleFilter } from "./role-filter";
+import { InputFilter, type TInputFilter } from "./input-filter";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -47,8 +35,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
-
-  const [filterKey, setFilterKey] = useState("email");
+  const [filterKey, setFilterKey] = useState<TInputFilter>("email");
 
   const table = useReactTable({
     data,
@@ -63,91 +50,33 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  console.log(table.getSelectedRowModel().rows);
-
-  const getRoleFilter = useCallback(
-    () => table.getColumn("role")?.getFilterValue() as RoleFilter,
-    [table],
-  );
-  const setRoleFilter = useCallback(
-    (value: RoleFilter) => table.getColumn("role")?.setFilterValue(value),
-    [table],
+  useEffect(
+    () =>
+      table
+        .getColumn("role")
+        ?.setFilterValue(["admin", "student"] as TRoleFilter),
+    [],
   );
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       <div className="flex items-center justify-between gap-2 py-4">
-        <div className="flex gap-6">
-          <div className="flex gap-1">
-              <Input
-                placeholder={`Filter ${filterKey}...`}
-                value={
-                  (table.getColumn(filterKey)?.getFilterValue() as string) ?? ""
-                }
-                onChange={(e) =>
-                  table.getColumn(filterKey)?.setFilterValue(e.target.value)
-                }
-                className="w-44"
-              />
-            <Select value={filterKey} onValueChange={setFilterKey}>
-              <SelectTrigger>
-                <Button variant="outline">
-                  <IoIosOptions />
-                </Button>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="name">Name</SelectItem>
-                <SelectItem value="email">Email</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="flex gap-2">
+          <InputFilter
+            filterKey={filterKey}
+            setFilterKey={setFilterKey}
+            filterValue={table.getColumn(filterKey)?.getFilterValue() as string}
+            setFilterValue={(value) =>
+              table.getColumn(filterKey)?.setFilterValue(value)
+            }
+          />
 
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button variant="outline">
-                Roles
-                <FaUsers />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuCheckboxItem
-                onSelect={(e) => e.preventDefault()}
-                className="capitalize"
-                checked={getRoleFilter() === "admin" || !getRoleFilter()}
-                onCheckedChange={(checked) => {
-                  const filter = getRoleFilter();
-
-                  if (checked) {
-                    if (filter === "none") return setRoleFilter("admin");
-                    return setRoleFilter(undefined);
-                  }
-
-                  if (filter === undefined) return setRoleFilter("student");
-                  return setRoleFilter("none");
-                }}
-              >
-                Admin
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                onSelect={(e) => e.preventDefault()}
-                className="capitalize"
-                checked={getRoleFilter() === "student" || !getRoleFilter()}
-                onCheckedChange={(checked) => {
-                  const filter = getRoleFilter();
-
-                  if (checked) {
-                    if (filter === "none") return setRoleFilter("student");
-                    return setRoleFilter(undefined);
-                  }
-
-                  if (filter === undefined) return setRoleFilter("admin");
-                  return setRoleFilter("none");
-                }}
-              >
-                Student
-              </DropdownMenuCheckboxItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <RoleFilter
+            filter={table.getColumn("role")?.getFilterValue() as TRoleFilter}
+            setRoleFilter={(value) =>
+              table.getColumn("role")?.setFilterValue(value)
+            }
+          />
         </div>
       </div>
 
