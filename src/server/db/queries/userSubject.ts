@@ -53,7 +53,6 @@ export const userSubjectQueries = {
         name: user.name,
         email: user.email,
         image: user.image,
-        role: user.role,
       })
       .from(userSubject)
       .innerJoin(user, eq(userSubject.userId, user.id))
