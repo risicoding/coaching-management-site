@@ -4,6 +4,7 @@ import { subjects } from "./subjects";
 import { attendance } from "./attendance";
 import { userSubject } from "./userSubject";
 import { z } from "zod";
+import { payments } from "./payments";
 
 export const daysEnum = z.enum([
   "sun",
@@ -22,6 +23,7 @@ export const subjectInsertSchema = createInsertSchema(subjects, {
 });
 export const attendanceInsertSchema = createInsertSchema(attendance);
 export const userSubjectInsertSchema = createInsertSchema(userSubject);
+export const paymentsInsertSchema = createInsertSchema(payments);
 
 // 🔽 SELECT SCHEMAS 🔽
 export const classSelectSchema = createSelectSchema(classes);
@@ -31,3 +33,4 @@ export const subjectSelectSchema = createSelectSchema(subjects, {
 
 export const attendanceSelectSchema = createSelectSchema(attendance);
 export const userSubjectSelectSchema = createSelectSchema(userSubject);
+
