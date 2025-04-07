@@ -1,1 +1,0 @@
-ALTER TABLE "subjects" ADD COLUMN "days" json;

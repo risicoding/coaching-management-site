@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AttendanceMenuCard } from "./attendance/attendance-menu-card";
+import StudentsMenuCard from "./students/students-menu-card";
 
 export const SubjectsMenu = () => {
   const searchParams = useSearchParams();
@@ -69,8 +70,8 @@ export const SubjectsMenu = () => {
       </TabsContent>
 
       <TabsContent value="students">
-        <MenuCard header="Students" description="View your student details.">
-          <p>Student details go here.</p>
+        <MenuCard header="Students" description="Student details.">
+          <StudentsMenuCard />
         </MenuCard>
       </TabsContent>
     </Tabs>

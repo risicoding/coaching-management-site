@@ -21,7 +21,7 @@ export const auth = betterAuth({
     },
   },
 
-  plugins: [admin(), openAPI(), nextCookies()],
+  plugins: [admin({defaultRole:'student'}), openAPI(), nextCookies()],
 });
 
 export type Session = typeof auth.$Infer.Session;

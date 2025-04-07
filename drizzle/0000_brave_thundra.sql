@@ -2,8 +2,7 @@ CREATE TABLE "attendance" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" text NOT NULL,
 	"subject_id" uuid NOT NULL,
-	"date" timestamp with time zone NOT NULL,
-	"is_present" boolean DEFAULT false,
+	"date" date NOT NULL,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	CONSTRAINT "attendance_user_id_subject_id_date_unique" UNIQUE("user_id","subject_id","date")
 );
@@ -72,6 +71,8 @@ CREATE TABLE "subjects" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"class_id" uuid,
+	"days" json NOT NULL,
+	"time" varchar,
 	"pricing" integer NOT NULL,
 	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP
