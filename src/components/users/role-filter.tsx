@@ -33,12 +33,12 @@ export const RoleFilter = ({ filter, setRoleFilter }: RoleFilterProps) => {
           {roles.map((role) => (
             <DropdownMenuItem key={role}>
               <Button
-                variant='ghost'
+                variant="ghost"
                 className="p-0"
                 onClick={() =>
                   filter.includes(role)
-                    ? setRoleFilter(filter.filter((val) => val !== "student"))
-                    : setRoleFilter([...filter, "student"])
+                    ? setRoleFilter(filter.filter((val) => val !== role))
+                    : setRoleFilter([...filter, role])
                 }
               >
                 <Checkbox checked={filter.includes(role)} />
