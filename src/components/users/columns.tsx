@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { RowAction } from "./row-action";
 import { FaUser, FaUserShield } from "react-icons/fa6";
 import { Checkbox } from "../ui/checkbox";
-import { TRoleFilter } from "./role-filter";
+import { Role, TRoleFilter } from "./role-filter";
 
 export type User = inferRouterOutputs<AppRouter>["users"]["getAll"][0];
 
@@ -59,7 +59,7 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "role",
     header: "Role",
     filterFn: (row, columnId, filterValue: TRoleFilter) =>
-      filterValue?.includes(row.getValue("role")),
+      filterValue?.includes(row.original.role as Role) ?? false,
 
     cell: ({ row }) => (
       <Badge className={cn("capitalize")}>

@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { FaUsers } from "react-icons/fa";
 import { Checkbox } from "../ui/checkbox";
 
-type Role = "admin" | "student";
+export type Role = "admin" | "student";
 
 export type TRoleFilter = Role[] | undefined;
 
