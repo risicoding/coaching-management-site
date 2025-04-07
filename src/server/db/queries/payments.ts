@@ -1,6 +1,6 @@
 import { db } from "../db";
 import { payments } from "../schemas/payments";
-import { eq, and, gte, lt } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { z } from "zod";
 import type { paymentsInsertSchema } from "../schemas";
 import { isSameMonth } from "date-fns";
