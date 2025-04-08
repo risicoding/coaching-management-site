@@ -22,13 +22,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-type UserListProps = {
+type UserSelectProps = {
   users: inferRouterOutputs<AppRouter>["users"]["getAll"];
   value?: string;
   onChange: (value: string) => void;
 };
 
-const UserList = ({ users, value, onChange }: UserListProps) => {
+export const UserSelect = ({ users, value, onChange }: UserSelectProps) => {
   const [open, setOpen] = useState(false);
   const selectedUser = users.find((user) => user.id === value);
 
@@ -91,4 +91,3 @@ const UserList = ({ users, value, onChange }: UserListProps) => {
   );
 };
 
-export default UserList;

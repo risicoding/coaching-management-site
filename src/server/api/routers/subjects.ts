@@ -108,7 +108,19 @@ export const subjectsRouter = createTRPCRouter({
     }
   }),
 
-  getByUserId: privateProcedure.query(async ({ ctx }) => {
+  getByUserId: privateProcedure.input(z.string()).query(async ({ input }) => {
+    try {
+      const result = await userSubjectQueries.getSubjectsByUserId(input);
+      return result;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: (error as Error).message,
+      });
+    }
+  }),
+
+  getEnrolledSubjectsSelf: privateProcedure.query(async ({ ctx }) => {
     const { id } = ctx.session.user;
     try {
       const result = await userSubjectQueries.getSubjectsByUserId(id);

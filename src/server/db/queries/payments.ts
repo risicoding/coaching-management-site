@@ -1,6 +1,6 @@
 import { db } from "../db";
-import { payments } from "../schemas/payments";
-import { eq } from "drizzle-orm";
+import { payments, paymentSubjects } from "../schemas/payments";
+import { and, eq } from "drizzle-orm";
 import type { z } from "zod";
 import type { paymentsInsertSchema } from "../schemas";
 import { isSameMonth } from "date-fns";
@@ -24,12 +24,25 @@ export const paymentQueries = {
     return await db
       .select()
       .from(payments)
-      .where(eq(payments.subjectId, subjectId));
+      .innerJoin(paymentSubjects, eq(payments.id, payments.id))
+      .where(eq(paymentSubjects.subjectId, subjectId));
   },
 
   getByUserId: async (userId: string) => {
     return await db.select().from(payments).where(eq(payments.userId, userId));
   },
+
+  getByUserAndSubjectId:async (userId: string, subjectId: string) =>
+    db
+      .select()
+      .from(payments)
+      .innerJoin(paymentSubjects, eq(payments.id, paymentSubjects.paymentId))
+      .where(
+        and(
+          eq(payments.userId, userId),
+          eq(paymentSubjects.subjectId, subjectId),
+        ),
+      ),
 
   getByUserAndMonth: async (userId: string, targetMonth: Date) => {
     const allUserPayments = await db
@@ -44,4 +57,18 @@ export const paymentQueries = {
   deleteById: async (id: string) => {
     return await db.delete(payments).where(eq(payments.id, id));
   },
+};
+
+export const paymentSubjectQueries = {
+  create: (paymentId: string, subjects: string[]) =>
+    db
+      .insert(paymentSubjects)
+      .values(subjects.map((sub) => ({ paymentId, subjectId: sub })))
+      .returning(),
+
+  getByPaymentId: (paymentId: string) =>
+    db
+      .select()
+      .from(paymentSubjects)
+      .where(eq(paymentSubjects.paymentId, paymentId)),
 };
