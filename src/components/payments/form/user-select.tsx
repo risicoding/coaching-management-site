@@ -25,7 +25,9 @@ import {
 type UserSelectProps = {
   users: inferRouterOutputs<AppRouter>["users"]["getAll"];
   value?: string;
+
   onChange: (value: string) => void;
+  disabled?: boolean;
 };
 
 export const UserSelect = ({ users, value, onChange }: UserSelectProps) => {
@@ -90,4 +92,3 @@ export const UserSelect = ({ users, value, onChange }: UserSelectProps) => {
     </Popover>
   );
 };
-

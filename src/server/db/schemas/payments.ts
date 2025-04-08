@@ -1,22 +1,20 @@
 import {
   pgTable,
   uuid,
+  text,
   timestamp,
-  numeric,
   date,
-  unique,
-  array,
-  pgTableCreator,
+  integer,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 import { subjects } from "./subjects";
 
 export const payments = pgTable("payments", {
   id: uuid("id").defaultRandom().primaryKey(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
-  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  amount: integer("amount").notNull(),
   month: date("payment_month").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()

@@ -21,7 +21,9 @@ const getMonthOptions = () => {
 };
 
 const MonthSelect = ({
-  value,
+  value = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+    .toISOString()
+    .split("T")[0]!,
   onChange,
 }: {
   value: string;
