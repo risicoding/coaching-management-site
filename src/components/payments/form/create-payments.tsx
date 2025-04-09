@@ -53,6 +53,8 @@ const formSchema = paymentsInsertSchema.extend({
 const CreatePaymentsForm = () => {
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
+  const utils = api.useUtils();
+
   // Fetch all users for the user selection dropdown
   const { data: users } = api.users.getAll.useQuery();
 
@@ -106,13 +108,13 @@ const CreatePaymentsForm = () => {
 
   const { mutateAsync } = api.payments.create.useMutation({
     onSuccess: () => {
-      // Close modal/dialog on success
+      utils.payments.invalidate();
       closeRef.current?.click();
     },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data); // Debug: see payload before mutation
+    console.log(data); 
     await mutateAsync(data);
   };
 
@@ -132,7 +134,7 @@ const CreatePaymentsForm = () => {
                     <UserSelect
                       value={field.value}
                       onChange={field.onChange}
-                      users={users}
+                      users={users.filter((user) => user.role === "student")}
                     />
                   </div>
                 ) : (

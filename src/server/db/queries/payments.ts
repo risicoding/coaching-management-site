@@ -2,11 +2,7 @@ import { db } from "../db";
 import { payments, paymentSubjects } from "../schemas/payments";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import type { z } from "zod";
-import {
-  subjects as subjectsSchema,
-  user as userSchema,
-  type paymentsInsertSchema,
-} from "../schemas";
+import { user, type paymentsInsertSchema } from "../schemas";
 import { isSameMonth } from "date-fns";
 
 type PaymentInput = z.infer<typeof paymentsInsertSchema>;
@@ -19,69 +15,52 @@ export const paymentQueries = {
   },
 
   getAll: async () => {
-    const results = await db
-      .select({
-        user: {
-          id: userSchema.id,
-          name: userSchema.name,
-          email: userSchema.email,
-          image: userSchema.image,
+    const result = await db.query.payments.findMany({
+      with: {
+        user: { columns: { id: true, name: true, email: true, image: true } },
+        paymentSubjects: {
+          with: {
+            subject: {
+              columns: {
+                id: true,
+                name: true,
+                pricing: true,
+              },
+            },
+          },
         },
-        ...paymentColumns,
-        subjects: subjectsSchema,
-      })
-      .from(payments)
-      .innerJoin(userSchema, eq(payments.userId, userSchema.id))
-      .innerJoin(paymentSubjects, eq(payments.id, paymentSubjects.paymentId))
-      .innerJoin(
-        subjectsSchema,
-        eq(subjectsSchema.id, paymentSubjects.subjectId),
-      );
+      },
+    });
 
-    if (results.length === 0) return null;
-
-    const { user, ...paymentData } = results[0]!;
-
-    return {
-      ...paymentData,
-      user,
-      subjects: results.map((r) => r.subjects).filter(Boolean),
-    };
+    return result.map((r) => {
+      const { paymentSubjects, ...rest } = r;
+      return { ...rest, subjects: paymentSubjects.map((p) => p.subject) };
+    });
   },
 
   getById: async (id: string) => {
-    const results = await db
-      .select({
-        ...paymentColumns,
-        user: {
-          id: userSchema.id,
-          name: userSchema.name,
-          email: userSchema.email,
-          image: userSchema.image,
+    const result = await db.query.payments.findFirst({
+      where: (payments, { eq }) => eq(payments.id, id),
+      with: {
+        user: { columns: { id: true, name: true, email: true, image: true } },
+        paymentSubjects: {
+          with: {
+            subject: {
+              columns: {
+                id: true,
+                name: true,
+                pricing: true,
+              },
+            },
+          },
         },
-        subjects: {
-          id: subjectsSchema.id,
-          name: subjectsSchema.name,
-          pricing: subjectsSchema.pricing,
-        },
-      })
-      .from(payments)
-      .innerJoin(paymentSubjects, eq(payments.id, paymentSubjects.paymentId))
-      .innerJoin(userSchema, eq(payments.userId, userSchema.id))
-      .innerJoin(
-        subjectsSchema,
-        eq(paymentSubjects.subjectId, subjectsSchema.id),
-      )
-      .where(eq(payments.id, id));
+      },
+    });
 
-    if (results.length === 0) return null;
+    if (!result) return undefined;
 
-    const { user, ...paymentData } = results[0]!;
-    return {
-      ...paymentData,
-      user,
-      subjects: results.map((r) => r.subjects).filter(Boolean),
-    };
+    const { paymentSubjects, ...rest } = result;
+    return { ...rest, subjects: paymentSubjects.map((p) => p.subject) };
   },
 
   getBySubjectId: async (subjectId: string) => {
@@ -89,39 +68,53 @@ export const paymentQueries = {
       .select({
         ...paymentColumns,
         user: {
-          id: userSchema.id,
-          name: userSchema.name,
-          email: userSchema.email,
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
         },
       })
       .from(payments)
+      .innerJoin(user, eq(payments.userId, user.id))
       .innerJoin(paymentSubjects, eq(payments.id, paymentSubjects.paymentId))
-      .innerJoin(userSchema, eq(payments.userId, userSchema.id))
       .where(eq(paymentSubjects.subjectId, subjectId));
   },
 
   getByUserId: async (userId: string) => {
-    return await db
-      .select({
-        ...paymentColumns,
-        subjects: {
-          id: subjectsSchema.id,
-          name: subjectsSchema.name,
-          pricing: subjectsSchema.pricing,
+    const result = await db.query.payments.findMany({
+      where: (payments, { eq }) => eq(payments.userId, userId),
+      with: {
+        paymentSubjects: {
+          with: {
+            subject: {
+              columns: {
+                id: true,
+                name: true,
+                pricing: true,
+              },
+            },
+          },
         },
-      })
-      .from(payments)
-      .innerJoin(paymentSubjects, eq(payments.id, paymentSubjects.paymentId))
-      .innerJoin(
-        subjectsSchema,
-        eq(paymentSubjects.subjectId, subjectsSchema.id),
-      )
-      .where(eq(payments.userId, userId));
+      },
+    });
+
+    return result.map((r) => {
+      const { paymentSubjects, userId, ...rest } = r;
+      return {
+        ...rest,
+        subjects: paymentSubjects.map((p) => p.subject),
+      };
+    });
   },
 
   getByUserAndSubjectId: async (userId: string, subjectId: string) =>
     db
-      .select()
+      .select({
+        id: payments.id,
+        month: payments.month,
+        amount: payments.month,
+        createdAt: payments.createdAt,
+      })
       .from(payments)
       .innerJoin(paymentSubjects, eq(payments.id, paymentSubjects.paymentId))
       .where(
@@ -147,11 +140,15 @@ export const paymentQueries = {
 };
 
 export const paymentSubjectQueries = {
-  create: (paymentId: string, subjects: string[]) =>
-    db
+  create: async (paymentId: string, subjects: string[]) => {
+    console.log(paymentId, subjects);
+    const res = await db
       .insert(paymentSubjects)
       .values(subjects.map((sub) => ({ paymentId, subjectId: sub })))
-      .returning(),
+      .returning();
+    console.log(res);
+    return res;
+  },
 
   getByPaymentId: (paymentId: string) =>
     db

@@ -8,6 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 import { subjects } from "./subjects";
+import { relations } from "drizzle-orm";
 
 export const payments = pgTable("payments", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -22,6 +23,25 @@ export const payments = pgTable("payments", {
 });
 
 export const paymentSubjects = pgTable("payment_subject", {
-  paymentId: uuid("payment_id").references(() => payments.id),
+  paymentId: uuid("payment_id").references(() => payments.id,{onDelete:'cascade'}),
   subjectId: uuid("subject_id").references(() => subjects.id),
 });
+
+export const paymentsRelations = relations(payments, ({ many, one }) => ({
+  paymentSubjects: many(paymentSubjects),
+  user: one(user, { fields: [payments.userId], references: [user.id] }),
+}));
+
+export const paymentSubjectsRelations = relations(
+  paymentSubjects,
+  ({ one }) => ({
+    payment: one(payments, {
+      fields: [paymentSubjects.paymentId],
+      references: [payments.id],
+    }),
+    subject: one(subjects, {
+      fields: [paymentSubjects.subjectId],
+      references: [subjects.id],
+    }),
+  }),
+);

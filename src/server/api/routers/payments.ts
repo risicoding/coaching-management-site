@@ -23,6 +23,7 @@ export const paymentsRouter = createTRPCRouter({
         const [payment] = await paymentQueries.create(paymentIData);
 
         waitUntil(paymentSubjectQueries.create(payment!.id, subjects));
+      console.log(subjects)
 
         return { ...payment, subjects };
       } catch (error) {
@@ -35,7 +36,9 @@ export const paymentsRouter = createTRPCRouter({
 
   getAll: adminProcedure.query(async () => {
     try {
-      return await paymentQueries.getAll();
+      const result = await paymentQueries.getAll();
+      console.log(result);
+      return result;
     } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
@@ -46,7 +49,7 @@ export const paymentsRouter = createTRPCRouter({
 
   getById: adminProcedure.input(z.string()).query(async ({ input }) => {
     try {
-      const [payment] = await paymentQueries.getById(input);
+      const payment = await paymentQueries.getById(input);
       return payment;
     } catch (error) {
       throw new TRPCError({
