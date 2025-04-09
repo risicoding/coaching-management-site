@@ -2,7 +2,11 @@ import { db } from "../db";
 import { payments, paymentSubjects } from "../schemas/payments";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import type { z } from "zod";
-import { subjects, user, type paymentsInsertSchema } from "../schemas";
+import {
+  subjects as subjectsSchema,
+  user as userSchema,
+  type paymentsInsertSchema,
+} from "../schemas";
 import { isSameMonth } from "date-fns";
 
 type PaymentInput = z.infer<typeof paymentsInsertSchema>;
@@ -15,49 +19,69 @@ export const paymentQueries = {
   },
 
   getAll: async () => {
-    return await db
+    const results = await db
       .select({
         user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
+          id: userSchema.id,
+          name: userSchema.name,
+          email: userSchema.email,
+          image: userSchema.image,
         },
         ...paymentColumns,
-        subjects: {
-          id: subjects.id,
-          name: subjects.name,
-          pricing: subjects.pricing,
-        },
+        subjects: subjectsSchema,
       })
       .from(payments)
-      .innerJoin(user, eq(payments.userId, user.id))
+      .innerJoin(userSchema, eq(payments.userId, userSchema.id))
       .innerJoin(paymentSubjects, eq(payments.id, paymentSubjects.paymentId))
-      .innerJoin(subjects, eq(subjects.id, paymentSubjects.subjectId));
+      .innerJoin(
+        subjectsSchema,
+        eq(subjectsSchema.id, paymentSubjects.subjectId),
+      );
+
+    if (results.length === 0) return null;
+
+    const { user, ...paymentData } = results[0]!;
+
+    return {
+      ...paymentData,
+      user,
+      subjects: results.map((r) => r.subjects).filter(Boolean),
+    };
   },
 
   getById: async (id: string) => {
-    return await db
+    const results = await db
       .select({
         ...paymentColumns,
         user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
+          id: userSchema.id,
+          name: userSchema.name,
+          email: userSchema.email,
+          image: userSchema.image,
         },
-        subject: {
-          id: subjects.id,
-          name: subjects.name,
-          pricing: subjects.pricing,
+        subjects: {
+          id: subjectsSchema.id,
+          name: subjectsSchema.name,
+          pricing: subjectsSchema.pricing,
         },
       })
       .from(payments)
       .innerJoin(paymentSubjects, eq(payments.id, paymentSubjects.paymentId))
-      .innerJoin(user, eq(payments.userId, user.id))
-      .innerJoin(subjects, eq(paymentSubjects.subjectId, subjects.id))
-      .where(eq(payments.id, id))
-      .limit(1);
+      .innerJoin(userSchema, eq(payments.userId, userSchema.id))
+      .innerJoin(
+        subjectsSchema,
+        eq(paymentSubjects.subjectId, subjectsSchema.id),
+      )
+      .where(eq(payments.id, id));
+
+    if (results.length === 0) return null;
+
+    const { user, ...paymentData } = results[0]!;
+    return {
+      ...paymentData,
+      user,
+      subjects: results.map((r) => r.subjects).filter(Boolean),
+    };
   },
 
   getBySubjectId: async (subjectId: string) => {
@@ -65,24 +89,33 @@ export const paymentQueries = {
       .select({
         ...paymentColumns,
         user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
+          id: userSchema.id,
+          name: userSchema.name,
+          email: userSchema.email,
         },
       })
       .from(payments)
-      .innerJoin(paymentSubjects, eq(payments.id, payments.id))
-      .innerJoin(user, eq(payments.userId, user.id))
+      .innerJoin(paymentSubjects, eq(payments.id, paymentSubjects.paymentId))
+      .innerJoin(userSchema, eq(payments.userId, userSchema.id))
       .where(eq(paymentSubjects.subjectId, subjectId));
   },
 
   getByUserId: async (userId: string) => {
     return await db
-      .select({ ...paymentColumns, subjects })
+      .select({
+        ...paymentColumns,
+        subjects: {
+          id: subjectsSchema.id,
+          name: subjectsSchema.name,
+          pricing: subjectsSchema.pricing,
+        },
+      })
       .from(payments)
       .innerJoin(paymentSubjects, eq(payments.id, paymentSubjects.paymentId))
-      .innerJoin(subjects, eq(paymentSubjects.subjectId, subjects.id))
+      .innerJoin(
+        subjectsSchema,
+        eq(paymentSubjects.subjectId, subjectsSchema.id),
+      )
       .where(eq(payments.userId, userId));
   },
 
