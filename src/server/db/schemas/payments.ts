@@ -6,12 +6,14 @@ import {
   date,
   integer,
 } from "drizzle-orm/pg-core";
+
 import { user } from "./auth-schema";
 import { subjects } from "./subjects";
 import { relations } from "drizzle-orm";
 
 export const payments = pgTable("payments", {
   id: uuid("id").defaultRandom().primaryKey(),
+  invoiceNumber: integer("invoice_number"),
   userId: text("user_id")
     .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
@@ -23,7 +25,9 @@ export const payments = pgTable("payments", {
 });
 
 export const paymentSubjects = pgTable("payment_subject", {
-  paymentId: uuid("payment_id").references(() => payments.id,{onDelete:'cascade'}),
+  paymentId: uuid("payment_id").references(() => payments.id, {
+    onDelete: "cascade",
+  }),
   subjectId: uuid("subject_id").references(() => subjects.id),
 });
 

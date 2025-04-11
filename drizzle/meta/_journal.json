@@ -36,6 +36,13 @@
       "when": 1744195704607,
       "tag": "0004_lonely_champions",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1744373618429,
+      "tag": "0005_yielding_king_bedlam",
+      "breakpoints": true
     }
   ]
 }

@@ -129,4 +129,5 @@ export const paymentsRouter = createTRPCRouter({
         });
       }
     }),
+  getInvoiceNumber:adminProcedure.query(async()=>{})
 });

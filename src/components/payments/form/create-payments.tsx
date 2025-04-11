@@ -27,6 +27,8 @@ import { MultiSelect } from "@/components/multi-select";
 import MonthSelect from "./month-select";
 import { HandCoins, Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { getInvoiceNumber, incrementInvoiceNumber } from "@/lib/inv-number";
+import { downloadPdf } from "@/components/invoice/invoice";
 
 export const CreatePayments = () => {
   return (
@@ -107,15 +109,42 @@ const CreatePaymentsForm = () => {
   }, [formSubjects, subjects, form]);
 
   const { mutateAsync } = api.payments.create.useMutation({
-    onSuccess: () => {
-      utils.payments.invalidate();
+    onSuccess: async () => {
+      void utils.payments.invalidate();
       closeRef.current?.click();
+      await incrementInvoiceNumber();
     },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data); 
-    await mutateAsync(data);
+    const invoiceNumber = await getInvoiceNumber();
+
+    const user = utils.users.getAll
+      .getData()
+      ?.find((user) => user.id === data.userId);
+
+    if (!user) return;
+
+    const subjects = utils.subjects.getAll
+      .getData()
+      ?.filter((sub) => data.subjects.includes(sub.id))
+      .map((sub) => ({
+        subject: sub.name,
+        month: data.month,
+        pricing: sub.pricing,
+      }));
+
+    if(!subjects) return
+
+    void downloadPdf({
+      invoiceNumber: invoiceNumber.toString(),
+      invoiceDate: new Date().toDateString(),
+      dueDate: new Date().toDateString(),
+      studentName: user.name,
+      studentEmail: user.email,
+      subjects,
+    });
+    await mutateAsync({ ...data, invoiceNumber });
   };
 
   return (

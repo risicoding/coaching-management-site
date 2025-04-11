@@ -55,19 +55,22 @@ export const columns: ColumnDef<Payment>[] = [
         </PopoverTrigger>
         <PopoverContent className="w-80 p-0" align="start">
           <div className="max-h-80 overflow-auto p-2">
-            {row.original.subjects.map((subject) => (
-              <Card key={subject.id} className="mb-2 overflow-hidden">
-                <CardContent className="flex items-center justify-between p-3">
-                  <div className="font-medium">{subject.name}</div>
-                  <div className="text-sm font-semibold text-primary">
-                    {new Intl.NumberFormat("en-In", {
-                      style: "currency",
-                      currency: "INR",
-                    }).format(subject.pricing)}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {row.original.subjects.map(
+              (subject) =>
+                subject && (
+                  <Card key={subject.id} className="mb-2 overflow-hidden">
+                    <CardContent className="flex items-center justify-between p-3">
+                      <div className="font-medium">{subject.name}</div>
+                      <div className="text-sm font-semibold text-primary">
+                        {new Intl.NumberFormat("en-In", {
+                          style: "currency",
+                          currency: "INR",
+                        }).format(subject.pricing)}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ),
+            )}
           </div>
         </PopoverContent>
       </Popover>
