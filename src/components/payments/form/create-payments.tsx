@@ -27,8 +27,8 @@ import { MultiSelect } from "@/components/multi-select";
 import MonthSelect from "./month-select";
 import { HandCoins, Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { getInvoiceNumber, incrementInvoiceNumber } from "@/lib/inv-number";
 import { downloadPdf } from "@/components/invoice/invoice";
+import { getInvoiceNumber, setInvoiceNumber } from "@/actions/invoice-number";
 
 export const CreatePayments = () => {
   return (
@@ -112,7 +112,7 @@ const CreatePaymentsForm = () => {
     onSuccess: async () => {
       void utils.payments.invalidate();
       closeRef.current?.click();
-      await incrementInvoiceNumber();
+      setInvoiceNumber();
     },
   });
 
@@ -134,16 +134,20 @@ const CreatePaymentsForm = () => {
         pricing: sub.pricing,
       }));
 
-    if(!subjects) return
+    if (!subjects) return;
 
     void downloadPdf({
-      invoiceNumber: invoiceNumber.toString(),
+      invoiceNumber:
+        Array.from({ length: 3 - invoiceNumber.toString().length })
+          .map(() => "0")
+          .join("") + invoiceNumber.toString(),
       invoiceDate: new Date().toDateString(),
       dueDate: new Date().toDateString(),
       studentName: user.name,
       studentEmail: user.email,
       subjects,
     });
+
     await mutateAsync({ ...data, invoiceNumber });
   };
 

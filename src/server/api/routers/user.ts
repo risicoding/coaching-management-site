@@ -68,6 +68,8 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         const result = await userQueries.setRole(input.ids, input.role);
+
+
         return result;
       } catch (error) {
         throw new TRPCError({

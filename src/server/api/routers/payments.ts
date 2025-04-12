@@ -12,6 +12,7 @@ import {
 import { paymentsInsertSchema } from "@/server/db/schemas";
 import { isSameMonth } from "date-fns";
 import { waitUntil } from "@vercel/functions";
+import { getInvoiceNumber, setInvoiceNumber } from "@/lib/redis/invoice-number";
 
 export const paymentsRouter = createTRPCRouter({
   create: adminProcedure
@@ -23,7 +24,7 @@ export const paymentsRouter = createTRPCRouter({
         const [payment] = await paymentQueries.create(paymentIData);
 
         waitUntil(paymentSubjectQueries.create(payment!.id, subjects));
-      console.log(subjects)
+        console.log(subjects);
 
         return { ...payment, subjects };
       } catch (error) {
@@ -129,5 +130,12 @@ export const paymentsRouter = createTRPCRouter({
         });
       }
     }),
-  getInvoiceNumber:adminProcedure.query(async()=>{})
+
+  getInvoiceNumber: adminProcedure.query(async () => {
+    return await getInvoiceNumber();
+  }),
+
+  setInvoiceNumber: adminProcedure.query(async () => {
+    return await setInvoiceNumber();
+  }),
 });
