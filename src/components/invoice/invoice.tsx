@@ -194,6 +194,7 @@ export const InvoicePDF: React.FC<Props> = ({
 };
 
 export const downloadPdf = async (props: Props) => {
+  console.log(props)
   const blob = await pdf(<InvoicePDF {...props} />).toBlob();
 
   const url = URL.createObjectURL(blob);

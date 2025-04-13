@@ -60,6 +60,18 @@ export const paymentsRouter = createTRPCRouter({
     }
   }),
 
+  getBySubjectId: adminProcedure.input(z.string()).query(async ({ input }) => {
+    try {
+      const res = await paymentQueries.getBySubjectId(input);
+      return res;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: (error as Error).message,
+      });
+    }
+  }),
+
   getByUser: adminProcedure.input(z.string()).query(async ({ input }) => {
     try {
       return await paymentQueries.getByUserId(input);

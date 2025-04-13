@@ -118,6 +118,7 @@ const CreatePaymentsForm = () => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const invoiceNumber = await getInvoiceNumber();
+    console.log(invoiceNumber);
 
     const user = utils.users.getAll
       .getData()
@@ -125,8 +126,7 @@ const CreatePaymentsForm = () => {
 
     if (!user) return;
 
-    const subjects = utils.subjects.getAll
-      .getData()
+    const selectedSubjects = subjects
       ?.filter((sub) => data.subjects.includes(sub.id))
       .map((sub) => ({
         subject: sub.name,
@@ -134,9 +134,9 @@ const CreatePaymentsForm = () => {
         pricing: sub.pricing,
       }));
 
-    if (!subjects) return;
+    if (!selectedSubjects) return;
 
-    void downloadPdf({
+    downloadPdf({
       invoiceNumber:
         Array.from({ length: 3 - invoiceNumber.toString().length })
           .map(() => "0")
@@ -145,8 +145,10 @@ const CreatePaymentsForm = () => {
       dueDate: new Date().toDateString(),
       studentName: user.name,
       studentEmail: user.email,
-      subjects,
+      subjects: selectedSubjects,
     });
+
+    console.log(data);
 
     await mutateAsync({ ...data, invoiceNumber });
   };
