@@ -7,13 +7,13 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AttendanceMenuCard } from "./attendance/attendance-menu-card";
 import StudentsMenuCard from "./students/students-menu-card";
+import PaymentMenuCard from "./payments/payment-menu-card";
 
 export const SubjectsMenu = () => {
   const searchParams = useSearchParams();
@@ -61,12 +61,7 @@ export const SubjectsMenu = () => {
       </TabsContent>
 
       <TabsContent value="payments">
-        <MenuCard header="Fees" description="Manage your fee payments.">
-          <p>Fee payment details go here.</p>
-          <CardFooter>
-            <Button>Pay Now</Button>
-          </CardFooter>
-        </MenuCard>
+        <PaymentMenuCard />
       </TabsContent>
 
       <TabsContent value="students">

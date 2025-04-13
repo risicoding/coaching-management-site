@@ -1,7 +1,7 @@
 export const authRoutes = ["/login", "/signup"];
 export const passwordRoutes = ["/reset-password", "/forgot-password"];
 export const protectedRoutes = ["/dashboard", "/profile", "/settings"];
-export const adminRoutes = ["/admin"];
+export const adminRoutes = ["/admin", "/api/invoice"];
 
 export const matchRoute = (
   pathname: string,
