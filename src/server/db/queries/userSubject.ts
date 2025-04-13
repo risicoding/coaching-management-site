@@ -1,7 +1,9 @@
 import { db } from "@/server/db/db";
 import { userSubject } from "@/server/db/schemas/userSubject";
-import { eq, and } from "drizzle-orm";
+import { eq, and,getTableColumns } from "drizzle-orm";
 import { subjects, user } from "../schemas";
+
+const subjectColumns=getTableColumns(subjects)
 
 export const userSubjectQueries = {
   enrollUser: (userSubjectData: typeof userSubject.$inferInsert) =>
@@ -27,13 +29,7 @@ export const userSubjectQueries = {
 
   getEnrolledSubject: async (userId: string, subjectId: string) => {
     const result = await db
-      .select({
-        id: subjects.id,
-        name: subjects.name,
-        days: subjects.days,
-        pricing: subjects.pricing,
-      })
-      .from(userSubject)
+      .select(subjectColumns) .from(userSubject)
       .innerJoin(subjects, eq(userSubject.subjectId, subjects.id))
       .where(
         and(
@@ -60,13 +56,7 @@ export const userSubjectQueries = {
 
   getSubjectsByUserId: (userId: string) =>
     db
-      .select({
-        id: subjects.id,
-        name: subjects.name,
-        days: subjects.days,
-        pricing: subjects.pricing,
-        time: subjects.time,
-      })
+      .select(subjectColumns)
       .from(userSubject)
       .innerJoin(subjects, eq(userSubject.subjectId, subjects.id))
       .where(eq(userSubject.userId, userId)),

@@ -33,5 +33,5 @@ export const subjectsQueries = {
     db.update(subjects).set(data).where(eq(subjects.id, id)).returning(),
 
   delete: (id: string) =>
-    db.delete(subjects).where(eq(subjects.id, id)).returning(),
+    db.delete(subjects).where(eq(subjects.id, id)).returning({id:subjects.id}),
 };
