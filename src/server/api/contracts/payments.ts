@@ -1,3 +1,4 @@
+import {initContract} from '@ts-rest/core'
 import { z } from "zod";
 import { honoErrorSchema } from "@/lib/hono-error";
 import {
@@ -8,8 +9,9 @@ import {
   paymentsWithSubjectsSelectSchema
 } from "@/server/db/schemas/zodSchemas";
 
+const c=initContract()
 
-export const paymentsContract = {
+export const paymentsContract =c.router( {
   getAllPayments: {
     path: "/admin/payments",
     method: "GET",
@@ -78,4 +80,4 @@ export const paymentsContract = {
       500: honoErrorSchema,
     },
   },
-};
+})

@@ -1,3 +1,4 @@
+import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import {
   subjectInsertSchema,
@@ -5,11 +6,11 @@ import {
 } from "@/server/db/schemas/zodSchemas";
 import { honoErrorSchema } from "@/lib/hono-error";
 
-
 const subjectArraySchema = z.array(subjectSelectSchema);
 
+const c = initContract();
 
-export const subjectsContract = {
+export const subjectsContract = c.router({
   post: {
     path: "/admin/subjects",
     method: "POST",
@@ -25,7 +26,7 @@ export const subjectsContract = {
     method: "GET",
     responses: {
       200: subjectSelectSchema,
-      404:honoErrorSchema ,
+      404: honoErrorSchema,
     },
   },
 
@@ -56,7 +57,7 @@ export const subjectsContract = {
 
   getEnrolled: {
     path: "/admin/subjects/enrolled",
-    method: "GET",
+    method: "POST",
     body: z.object({ subjectId: z.string() }),
     responses: {
       200: subjectSelectSchema,
@@ -78,8 +79,8 @@ export const subjectsContract = {
     path: "/admin/subjects/:id",
     method: "DELETE",
     responses: {
-      200: z.object({message:z.string()}),
+      200: z.object({ message: z.string() }),
       404: honoErrorSchema,
     },
   },
-};
+});

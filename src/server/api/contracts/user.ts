@@ -1,4 +1,5 @@
-import {  honoErrorSchema } from "@/lib/hono-error";
+import { initContract } from "@ts-rest/core";
+import { honoErrorSchema } from "@/lib/hono-error";
 import { z } from "zod";
 
 // Reusable user schema
@@ -13,7 +14,9 @@ const userSchema = z.object({
 
 const userArraySchema = z.array(userSchema);
 
-export const userContract = {
+const c = initContract();
+
+export const userContract = c.router({
   getAll: {
     path: "/admin/user",
     method: "GET",
@@ -82,8 +85,7 @@ export const userContract = {
     responses: {
       200: userArraySchema,
       404: honoErrorSchema,
-      500:honoErrorSchema ,
+      500: honoErrorSchema,
     },
   },
-};
-
+});

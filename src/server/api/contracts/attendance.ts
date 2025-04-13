@@ -1,3 +1,4 @@
+import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import { honoErrorSchema } from "@/lib/hono-error";
 import {
@@ -7,7 +8,9 @@ import {
 
 const attendanceArraySchema = z.array(attendanceSelectSchema);
 
-export const attendanceContract = {
+const c = initContract();
+
+export const attendanceContract = c.router({
   createAttendance: {
     path: "/admin/attendance",
     method: "POST",
@@ -47,4 +50,4 @@ export const attendanceContract = {
       500: honoErrorSchema,
     },
   },
-};
+});

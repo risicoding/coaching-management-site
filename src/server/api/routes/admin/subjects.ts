@@ -65,7 +65,7 @@ app.get("/user/:userId", async (c) => {
   }
 });
 
-app.get(
+app.post(
   "/enrolled",
   zValidator("json", z.object({ subjectId: z.string() })),
   async (c) => {

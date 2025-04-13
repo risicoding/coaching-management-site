@@ -1,3 +1,4 @@
+import {initContract} from '@ts-rest/core'
 import { z } from "zod";
 import { classInsertSchema, classSelectSchema } from "@/server/db/schemas/zodSchemas";
 import { honoErrorSchema } from "@/lib/hono-error";
@@ -11,7 +12,9 @@ const classSchema = classSelectSchema.extend({
 
 const classArraySchema = z.array(classSchema);
 
-export const classesContract = {
+const c=initContract()
+
+export const classesContract =c.router( {
   getAll: {
     path: "/admin/classes",
     method: "GET",
@@ -61,5 +64,4 @@ export const classesContract = {
       500: honoErrorSchema,
     },
   },
-};
-
+})
