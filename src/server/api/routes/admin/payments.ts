@@ -1,6 +1,6 @@
 import { honoError } from '@/lib/hono-error';
 import { paymentQueries } from '@/server/db/queries/payments';
-import { paymentsInsertSchema } from '@/server/db/schemas';
+import { paymentInsertSchema } from '@/server/db/schemas';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
 
@@ -32,7 +32,7 @@ app.get('/:id', async (c) => {
   }
 });
 
-app.post('/', zValidator('json', paymentsInsertSchema), async (c) => {
+app.post('/', zValidator('json', paymentInsertSchema), async (c) => {
   try {
     const data = c.req.valid('json');
     const res = await paymentQueries.create(data);

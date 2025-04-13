@@ -111,6 +111,7 @@ export const paymentQueries = {
     db
       .select({
         id: payments.id,
+        invoiceNumber: payments.invoiceNumber,
         month: payments.month,
         amount: payments.month,
         createdAt: payments.createdAt,
