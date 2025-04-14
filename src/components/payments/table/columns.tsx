@@ -9,8 +9,16 @@ import { Button } from "@/components/ui/button";
 import RowAction from "./row-action";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import type { ServerInferResponses } from "@ts-rest/core";
+import type { paymentsContract } from "@/server/api/contracts/payments";
 
-export type Payment = inferRouterOutputs<AppRouter>["payments"]["getAll"][0];
+type ResponseShapes = ServerInferResponses<
+  typeof paymentsContract
+>["getAllPayments"];
+
+type InferSuccess<T> = T extends { status: 200 } ? T : never;
+
+type Payment = InferSuccess<ResponseShapes>["body"][0];
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -91,7 +99,7 @@ export const columns: ColumnDef<Payment>[] = [
     header: "Payment Date",
     cell: ({ row }) => (
       <span>
-        {row.original.createdAt.toLocaleDateString("en-US", {
+        {row.original.createdAt?.toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
           year: "2-digit",

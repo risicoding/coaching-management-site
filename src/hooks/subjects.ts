@@ -61,19 +61,6 @@ export const useSubjectsByUser = (userId: string) =>
     },
   });
 
-export const useEnrolledSubject = (subjectId: string) =>
-  useQuery({
-    queryKey: ["subjects", "enrolled", subjectId],
-    queryFn: async () => {
-      const { status, body } = await subjectsClient.getEnrolled({
-        body: { subjectId },
-      });
-
-      if (status !== 200) throw body;
-      return body;
-    },
-  });
-
 export const useCreateSubject = () => {
   const queryClient = useQueryClient();
 

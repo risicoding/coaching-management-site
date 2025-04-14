@@ -1,11 +1,15 @@
-import type { inferRouterOutputs } from "@trpc/server";
-import type { AppRouter } from "@/server/api/root";
 import type { ColumnDef } from "@tanstack/react-table";
 import { User } from "lucide-react";
 import RowAction from "@/components/payments/table/row-action";
+import type{ServerInferResponses} from '@ts-rest/core'
+import type{paymentsContract} from '@/server/api/contracts/payments'
 
-export type Payment =
-  inferRouterOutputs<AppRouter>["payments"]["getBySubjectId"][0];
+
+export type ResponseShapes = ServerInferResponses<typeof paymentsContract>['getPaymentsBySubjectId']
+
+type InferSuccess<T>=T extends {status:200}?T:never
+
+export type Payment =InferSuccess<ResponseShapes>['body'][0]
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -44,7 +48,7 @@ export const columns: ColumnDef<Payment>[] = [
     header: "Payment Date",
     cell: ({ row }) => (
       <span>
-        {row.original.createdAt.toLocaleDateString("en-US", {
+        {row.original.createdAt?.toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
           year: "2-digit",

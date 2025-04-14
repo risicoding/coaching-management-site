@@ -4,9 +4,9 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { User } from "lucide-react";
-import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
 import { UserAttendanceDialog } from "./user-attendance-dialog";
+import { useCreateAttendance, useDeleteAttendance } from "@/hooks/attendance";
 
 interface UserCardProps {
   id: string;
@@ -26,21 +26,12 @@ const UserCard: React.FC<UserCardProps> = ({
   const { subjectId } = useParams<{ subjectId: string }>();
   const [present, setPresent] = useState(isPresent);
 
-  const utils = api.useUtils();
 
-  const { mutate: createAttendance } = api.attendance.create.useMutation({
-    onSuccess: async () => {
-      await utils.attendance.invalidate();
-    },
-  });
+  const { mutate: createAttendance } =useCreateAttendance()
 
-  const { mutate: deleteAttendance } = api.attendance.delete.useMutation({
-    onSuccess: async () => {
-      await utils.attendance.invalidate();
-    },
-  });
+    const { mutate: deleteAttendance } = useDeleteAttendance()
 
-  const handleCheckboxChange = (checked: boolean) => {
+    const handleCheckboxChange = (checked: boolean) => {
     setPresent(checked);
     if (checked) {
       createAttendance({ userId: id, subjectId, date: new Date() });

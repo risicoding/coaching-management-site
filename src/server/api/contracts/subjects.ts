@@ -55,14 +55,6 @@ export const subjectsContract = c.router({
     },
   },
 
-  getEnrolled: {
-    path: "/admin/subjects/enrolled",
-    method: "POST",
-    body: z.object({ subjectId: z.string() }),
-    responses: {
-      200: subjectSelectSchema,
-    },
-  },
 
   update: {
     path: "/admin/subjects/:id",

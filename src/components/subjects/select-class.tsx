@@ -1,4 +1,4 @@
-import { api } from "@/trpc/react";
+import { useAllClasses } from "@/hooks/classes";
 import {
   Select,
   SelectTrigger,
@@ -13,7 +13,7 @@ export type SelectClassProps = {
   onBlur: () => void;
 };
 export const SelectClass = ({ onChange, value }: SelectClassProps) => {
-  const { data: classesData } = api.classes.getAll.useQuery();
+  const { data: classesData } =useAllClasses()
 
   return (
     <Select onValueChange={onChange} value={value ?? undefined}>

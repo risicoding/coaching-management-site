@@ -3,7 +3,7 @@ import "@/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
-import { Providers } from "./providers";
+import QueryProvider from "./query-provider";
 
 import { Toaster } from "@/components/ui/sonner";
 
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className="dark">
-        <Providers>{children}</Providers>
+        <QueryProvider>{children}</QueryProvider>
         <Toaster />
       </body>
     </html>

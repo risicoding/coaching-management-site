@@ -65,26 +65,6 @@ app.get("/user/:userId", async (c) => {
   }
 });
 
-app.post(
-  "/enrolled",
-  zValidator("json", z.object({ subjectId: z.string() })),
-  async (c) => {
-    try {
-      const { subjectId } = c.req.valid("json");
-      const { id } = c.get("session").user;
-      let result = await userSubjectQueries.getEnrolledSubject(id, subjectId);
-
-      if (!result) {
-        await userSubjectQueries.enrollUser({ userId: id, subjectId });
-        result = await userSubjectQueries.getEnrolledSubject(id, subjectId);
-      }
-
-      return c.json(result);
-    } catch (err) {
-      return honoError("INTERNAL_SERVER_ERROR", c, err);
-    }
-  },
-);
 
 app.put(
   "/:id",

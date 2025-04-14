@@ -1,5 +1,6 @@
 import { honoError } from "@/lib/hono-error";
 import { userQueries } from "@/server/db/queries/user";
+import { userSubjectQueries } from "@/server/db/queries/userSubject";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { z } from "zod";
@@ -12,7 +13,7 @@ app.get("/", async (c) => {
     return c.json(res);
   } catch (err) {
     console.error(err);
-    return honoError('INTERNAL_SERVER_ERROR',c,err)
+    return honoError("INTERNAL_SERVER_ERROR", c, err);
   }
 });
 
@@ -21,14 +22,14 @@ app.get("/:id", async (c) => {
     const id = c.req.param("id");
     const res = await userQueries.getById(id);
 
-    if (!res ) {
-      return honoError('NOT_FOUND',c)
+    if (!res) {
+      return honoError("NOT_FOUND", c);
     }
 
     return c.json(res);
   } catch (err) {
     console.error(err);
-    return honoError('INTERNAL_SERVER_ERROR',c,err)
+    return honoError("INTERNAL_SERVER_ERROR", c, err);
   }
 });
 
@@ -37,14 +38,26 @@ app.get("/email/:id", async (c) => {
     const id = c.req.param("id");
     const res = await userQueries.getByEmail(id);
 
-    if (!res ) {
-      return honoError('NOT_FOUND',c)
+    if (!res) {
+      return honoError("NOT_FOUND", c);
     }
 
     return c.json(res);
   } catch (err) {
     console.error(err);
-    return honoError('INTERNAL_SERVER_ERROR',c,err)
+    return honoError("INTERNAL_SERVER_ERROR", c, err);
+  }
+});
+
+app.get("/subject/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const res = await userSubjectQueries.getUsersInSubject(id);
+    if (res.length === 0) {
+    }
+    return c.json(res);
+  } catch (err) {
+    return honoError("INTERNAL_SERVER_ERROR", c, err);
   }
 });
 
@@ -54,7 +67,7 @@ app.get("/admins", async (c) => {
     return c.json(res);
   } catch (err) {
     console.error(err);
-    return honoError('INTERNAL_SERVER_ERROR',c,err)
+    return honoError("INTERNAL_SERVER_ERROR", c, err);
   }
 });
 
@@ -64,7 +77,7 @@ app.get("/users", async (c) => {
     return c.json(res);
   } catch (err) {
     console.error(err);
-    return honoError('INTERNAL_SERVER_ERROR',c)
+    return honoError("INTERNAL_SERVER_ERROR", c);
   }
 });
 
@@ -77,21 +90,21 @@ app.post(
       const res = await userQueries.delete(ids);
 
       if (res.length === 0) {
-        return honoError('NOT_FOUND',c)
+        return honoError("NOT_FOUND", c);
       }
 
       return c.json(res);
     } catch (err) {
-      return honoError('INTERNAL_SERVER_ERROR',c,err)
+      return honoError("INTERNAL_SERVER_ERROR", c, err);
     }
-  }
+  },
 );
 
 app.post(
   "/role",
   zValidator(
     "json",
-    z.object({ ids: z.array(z.string()), role: z.enum(["admin", "student"]) })
+    z.object({ ids: z.array(z.string()), role: z.enum(["admin", "student"]) }),
   ),
   async (c) => {
     try {
@@ -99,15 +112,14 @@ app.post(
       const res = await userQueries.setRole(ids, role);
 
       if (res.length === 0) {
-        return honoError('NOT_FOUND',c)
+        return honoError("NOT_FOUND", c);
       }
 
       return c.json(res);
     } catch (err) {
-      return honoError('INTERNAL_SERVER_ERROR',c,err)
+      return honoError("INTERNAL_SERVER_ERROR", c, err);
     }
-  }
+  },
 );
 
 export { app as userRouter };
-

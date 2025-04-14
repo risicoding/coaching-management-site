@@ -27,12 +27,25 @@ export const useUserById = (id: string) =>
     },
   });
 
-
 export const useUserByEmail = (email: string) =>
   useQuery({
     queryKey: ["users", "email", email],
     queryFn: async () => {
-      const { status, body } = await userClient.getByEmail({ params: { id: email } });
+      const { status, body } = await userClient.getByEmail({
+        params: { id: email },
+      });
+      if (status !== 200) throw body;
+      return body;
+    },
+  });
+
+export const useUserBySubjectId = (subjectId: string) =>
+  useQuery({
+    queryKey: ["users", "subject", subjectId],
+    queryFn: async () => {
+      const { status, body } = await userClient.getBySubjectId({
+        params: { id: subjectId },
+      });
       if (status !== 200) throw body;
       return body;
     },
@@ -93,4 +106,3 @@ export const useUpdateRoles = () => {
     },
   });
 };
-

@@ -1,15 +1,21 @@
-import type { AppRouter } from "@/server/api/root";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { inferRouterOutputs } from "@trpc/server";
 import { User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { RowAction } from "./row-action";
 import { FaUser, FaUserShield } from "react-icons/fa6";
 import { Checkbox } from "../ui/checkbox";
-import { Role, TRoleFilter } from "./role-filter";
+import type { Role, TRoleFilter } from "./role-filter";
+import type { ServerInferResponses } from "@ts-rest/core";
+import type { userContract } from "@/server/api/contracts/user";
 
-export type User = inferRouterOutputs<AppRouter>["users"]["getAll"][0];
+export type ResponseShapes = ServerInferResponses<
+  typeof userContract
+>["getAll"];
+
+type InferSuccess<T> = T extends { status: 200 } ? T : never;
+
+export type User = InferSuccess<ResponseShapes>["body"][0];
 
 export const columns: ColumnDef<User>[] = [
   {

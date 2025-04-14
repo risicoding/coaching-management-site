@@ -130,6 +130,6 @@ export const attendanceQueries = {
           eq(attendance.date, date),
         ),
       )
-      .returning();
+      .returning({id:attendance.id});
   },
 };

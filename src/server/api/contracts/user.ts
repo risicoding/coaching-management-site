@@ -7,9 +7,8 @@ const userSchema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.string(),
+  image: z.string(),
   role: z.enum(["admin", "student"]),
-  createdAt: z.string(),
-  updatedAt: z.string(),
 });
 
 const userArraySchema = z.array(userSchema);
@@ -41,6 +40,16 @@ export const userContract = c.router({
     method: "GET",
     responses: {
       200: userSchema,
+      404: honoErrorSchema,
+      500: honoErrorSchema,
+    },
+  },
+
+  getBySubjectId: {
+    path: "/admin/user/subject/:id",
+    method: "GET",
+    responses: {
+      200:z.array( userSchema.omit({ role: true })),
       404: honoErrorSchema,
       500: honoErrorSchema,
     },

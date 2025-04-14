@@ -1,4 +1,4 @@
-import { initClient, TsRestResponseError } from "@ts-rest/core";
+import { initClient } from "@ts-rest/core";
 import { attendanceContract } from "@/server/api/contracts/attendance";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { env } from "@/env";
@@ -18,7 +18,7 @@ export const useBySubjectId = (subjectId: string) =>
       });
 
       if (status !== 200) {
-        throw body
+        throw body;
       }
 
       return body;
@@ -35,8 +35,22 @@ export const useByUserAndSubjectId = (userId: string, subjectId: string) =>
         });
 
       if (status !== 200) {
-        throw body
+        throw body;
       }
+      return body;
+    },
+  });
+
+export const useTodaysAttendanceBySubjectId = (subjectId: string) =>
+  useQuery({
+    queryKey: ["attendance", "today", subjectId],
+    queryFn: async () => {
+      const { status, body } =
+        await attendanceClient.getTodaysAttendanceBySubjectId({
+          params: { id: subjectId },
+        });
+      if (status !== 200) throw body;
+
       return body;
     },
   });
@@ -50,7 +64,7 @@ export const usePresentCountBySubjectId = (subjectId: string) =>
           params: { subjectId },
         });
 
-      if (status !== 200) throw body
+      if (status !== 200) throw body;
       return body;
     },
   });
@@ -64,11 +78,36 @@ export const useCreateAttendance = () => {
         body: data,
       });
 
-      if (status !== 200) throw body
+      if (status !== 200) throw body;
       return body;
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["attendance"] });
     },
+  });
+};
+
+export const useDeleteAttendance = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      userId: string;
+      subjectId: string;
+      date: Date;
+    }) => {
+      const { status, body } = await attendanceClient.deleteAttendance({
+        params: {
+          ...data,
+          date: data.date.toISOString(),
+        },
+      });
+      if (status !== 200) {
+        throw body;
+      }
+      return body;
+    },
+    onSettled: async () =>
+      queryClient.invalidateQueries({ queryKey: ["attendance"] }),
   });
 };

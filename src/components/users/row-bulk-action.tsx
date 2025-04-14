@@ -6,8 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { api } from "@/trpc/react";
 import { BsThreeDots } from "react-icons/bs";
+import { useDeleteUsers, useUpdateRoles } from "@/hooks/user";
 
 export const RowBulkAction = ({
   ids,
@@ -16,56 +16,8 @@ export const RowBulkAction = ({
   ids: string[];
   reset: () => void;
 }) => {
-  const utils = api.useUtils();
-
-  const { mutate: deleteUsers } = api.users.delete.useMutation({
-    onSettled: () => utils.users.getAll.invalidate(),
-    onMutate: async (ids) => {
-      void utils.users.getAll.cancel();
-
-      const data = utils.users.getAll.getData();
-      console.log(data);
-
-      utils.users.getAll.setData(undefined, (users) =>
-        users?.filter((user) => !ids.includes(user.id)),
-      );
-
-      reset();
-
-      return { data };
-    },
-    onError: (error, variables, context) => {
-      utils.users.getAll.setData(undefined, context?.data);
-    },
-  });
-
-  const { mutate: setRole } = api.users.setRole.useMutation({
-    onMutate: async ({ ids, role }) => {
-      void utils.users.getAll.cancel();
-
-      const data = utils.users.getAll.getData();
-
-      utils.users.getAll.setData(undefined, (users) =>
-        users?.map((user) =>
-          ids.includes(user.id) ? { ...user, role } : user,
-        ),
-      );
-
-      reset()
-
-      return { data };
-
-    },
-
-    onError: (error, variable, context) => {
-      utils.users.getAll.setData(undefined, context?.data);
-    },
-
-    onSettled: () => {
-      void utils.users.getAll.invalidate();
-      reset();
-    },
-  });
+  const { mutate: deleteUsers } = useDeleteUsers();
+  const { mutate: setRole } = useUpdateRoles();
 
   return (
     <DropdownMenu>
@@ -75,11 +27,17 @@ export const RowBulkAction = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => deleteUsers(ids)}>
+        <DropdownMenuItem
+          onClick={() => deleteUsers(ids, { onSuccess: () => reset() })}
+        >
           <FaTrash />
           Delete
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setRole({ ids, role: "admin" })}>
+        <DropdownMenuItem
+          onClick={() =>
+            setRole({ ids, role: "admin" }, { onSuccess: () => reset() })
+          }
+        >
           <FaUserShield />
           Promote to admin
         </DropdownMenuItem>

@@ -21,8 +21,27 @@ export const attendanceContract = c.router({
     },
   },
 
+  deleteAttendance: {
+    path: "/admin/attendance/subject/:subjectId/user/:userId/:date",
+    method: "DELETE",
+    responses: {
+      200: z.object({ id: z.string() }),
+      500: honoErrorSchema,
+    },
+  },
+
   getAttendanceBySubjectId: {
     path: "/admin/attendance/subject/:subjectId",
+    method: "GET",
+    responses: {
+      200: attendanceArraySchema,
+      404: honoErrorSchema,
+      500: honoErrorSchema,
+    },
+  },
+
+  getTodaysAttendanceBySubjectId: {
+    path: "/admin/attendance/subject/:id/today",
     method: "GET",
     responses: {
       200: attendanceArraySchema,
@@ -35,7 +54,11 @@ export const attendanceContract = c.router({
     path: "/admin/attendance/user/:userId/subject/:subjectId",
     method: "GET",
     responses: {
-      200: attendanceArraySchema,
+      200: z.array(
+        attendanceSelectSchema.extend({
+          status: z.enum(["present", "absent", "off"]),
+        }),
+      ),
       404: honoErrorSchema,
       500: honoErrorSchema,
     },
