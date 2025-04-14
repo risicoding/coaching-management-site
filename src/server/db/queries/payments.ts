@@ -2,10 +2,11 @@ import { db } from "../db";
 import { payments, paymentSubjects } from "../schemas/payments";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import type { z } from "zod";
-import { user, type paymentsInsertSchema } from "../schemas";
+import { user  } from "../schemas";
+import {paymentInsertSchema} from '@/server/db/schemas/zodSchemas'
 import { isSameMonth } from "date-fns";
 
-type PaymentInput = z.infer<typeof paymentsInsertSchema>;
+type PaymentInput = z.infer<typeof paymentInsertSchema>;
 
 const { userId, ...paymentColumns } = getTableColumns(payments);
 
@@ -111,6 +112,7 @@ export const paymentQueries = {
     db
       .select({
         id: payments.id,
+        invoiceNumber: payments.invoiceNumber,
         month: payments.month,
         amount: payments.month,
         createdAt: payments.createdAt,

@@ -1,13 +1,13 @@
-'use client'
+"use client";
 import React from "react";
 import { InfoBar } from "@/components/info-bar";
 import { User } from "lucide-react";
-import { api } from "@/trpc/react";
 import { columns } from "@/components/users/columns";
 import { DataTable } from "@/components/users/data-table";
+import { useAllUsers } from "@/hooks/user";
 
 const Page = () => {
-  const { data } = api.users.getAll.useQuery();
+  const { data } = useAllUsers();
 
   return (
     <div className="space-y-4">

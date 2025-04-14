@@ -1,18 +1,20 @@
 "use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
 import React from "react";
 import UserCard from "./user-card";
 import { UserCardSkeleton } from "@/components/skeleton/user-card";
+import { useUserBySubjectId } from "@/hooks/user";
+import { useTodaysAttendanceBySubjectId } from "@/hooks/attendance";
 
 export const AttendanceMenuCard = () => {
   const { subjectId } = useParams<{ subjectId: string }>();
 
   const { data: userData, isLoading: userIsLoading } =
-    api.users.getUsersBySubjectId.useQuery(subjectId);
+    useUserBySubjectId(subjectId);
   const { data: attendanceData, isLoading: attendanceIsLoading } =
-    api.attendance.getTodaysAttendanceBySubjectId.useQuery(subjectId);
+    useTodaysAttendanceBySubjectId(subjectId);
 
   const isLoading = userIsLoading || attendanceIsLoading;
 

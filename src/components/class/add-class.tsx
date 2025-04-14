@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/dialog";
 import React, { useRef } from "react";
 import { Loader } from "lucide-react";
-import { api } from "@/trpc/react";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { useCreateClass } from "@/hooks/classes";
 
 export const AddClassDialog = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -46,13 +46,9 @@ const formSchema = z.object({
 
 export const AddClassForm = () => {
   const ref = useRef<HTMLButtonElement | null>(null);
-  const utils = api.useUtils();
-  const { mutateAsync } = api.classes.create.useMutation({
-    onSuccess: async () => {
-      void utils.classes.getAll.invalidate();
-      ref.current?.click();
-    },
-  });
+
+  const { mutateAsync } = useCreateClass();
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: { classNo: undefined },
@@ -60,6 +56,7 @@ export const AddClassForm = () => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     await mutateAsync({ classNumber: data.classNo });
+    ref.current?.click();
   };
 
   return (
@@ -94,4 +91,3 @@ export const AddClassForm = () => {
     </Form>
   );
 };
-

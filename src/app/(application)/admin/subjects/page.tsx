@@ -2,13 +2,14 @@
 
 import { AddSubjectsDialog } from "@/components/subjects/add-subjects";
 import React from "react";
-import { api } from "@/trpc/react";
 import { SubjectCard } from "@/components/subjects/subject-card";
 import Link from "next/link";
 import { InfoBar } from "@/components/info-bar";
 import { Button } from "@/components/ui/button";
 import { Folder, Plus } from "lucide-react";
 import { SubjectCardSkeleton } from "@/components/skeleton/subject-card-skeleton";
+import { useAllSubjects } from "@/hooks/subjects";
+import { useAllClasses } from "@/hooks/classes";
 
 const Page = () => {
   return (
@@ -19,8 +20,8 @@ const Page = () => {
 };
 
 const SubjectsInfoBar = () => {
-  const { data, isLoading } = api.subjects.getAll.useQuery();
-  const { data: classes } = api.classes.getAll.useQuery();
+  const { data, isLoading } = useAllSubjects();
+  const { data: classes } = useAllClasses();
 
   return (
     <div className="space-y-6">

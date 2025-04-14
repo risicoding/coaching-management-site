@@ -21,12 +21,12 @@ import {
 } from "@/components/ui/dialog";
 import React, { useRef } from "react";
 import { Loader } from "lucide-react";
-import { api } from "@/trpc/react";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { daysEnum, subjectInsertSchema } from "@/server/db/schemas";
 import { WeekdayPicker } from "./week-day-picker";
 import { convertToAMPM } from "@/lib/format-time";
 import { SelectClass } from "./select-class";
+import { useCreateSubject } from "@/hooks/subjects";
 
 export const AddSubjectsDialog = ({
   children,
@@ -58,16 +58,10 @@ const formSchema = subjectInsertSchema
 const AddSubjectForm = ({ classId }: { classId?: string }) => {
   const ref = useRef<HTMLButtonElement | null>(null);
 
-  const utils = api.useUtils();
-  void utils.classes.getAll.prefetch();
 
-  const { mutateAsync } = api.subjects.create.useMutation({
-    onSuccess: async () => {
-      void utils.subjects.getAll.invalidate();
-      ref.current?.click();
-    },
-  });
-  const form = useForm<z.infer<typeof formSchema>>({
+  const { mutateAsync } = useCreateSubject()
+
+    const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -82,7 +76,7 @@ const AddSubjectForm = ({ classId }: { classId?: string }) => {
     await mutateAsync({
       ...data,
       classId: data.classId === "other" ? null : data.classId,
-    });
+    },{onSettled:()=>ref.current?.click()});
   };
 
   return (

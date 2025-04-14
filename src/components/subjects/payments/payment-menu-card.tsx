@@ -1,13 +1,13 @@
 import React from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card,  CardContent } from "@/components/ui/card";
 import { useParams } from "next/navigation";
-import { api } from "@/trpc/react";
 import { DataTable } from "@/components/payments/table/data-table";
 import { columns } from "./table/columns";
+import {usePaymentsBySubjectId} from '@/hooks/payments'
 
 const PaymentMenuCard = () => {
   const { subjectId } = useParams<{ subjectId: string }>();
-  const { data } = api.payments.getBySubjectId.useQuery(subjectId);
+  const { data } = usePaymentsBySubjectId(subjectId)
 
   return (
     <Card className="py-6">

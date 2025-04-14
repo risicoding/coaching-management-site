@@ -1,10 +1,5 @@
-"use client";
-
 import { useState } from "react";
 import { Check, ChevronDown, User } from "lucide-react";
-
-import type { inferRouterOutputs } from "@trpc/server";
-import type { AppRouter } from "@/server/api/root";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -21,9 +16,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import type { ServerInferResponses } from "@ts-rest/core";
+import type { userContract } from "@/server/api/contracts/user";
+import type { InferSuccess } from "@/lib/inferSuccess";
 
 type UserSelectProps = {
-  users: inferRouterOutputs<AppRouter>["users"]["getAll"];
+  users: InferSuccess<
+    ServerInferResponses<typeof userContract>["getAll"]
+  >["body"];
   value?: string;
 
   onChange: (value: string) => void;

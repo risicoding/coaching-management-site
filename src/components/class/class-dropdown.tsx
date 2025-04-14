@@ -6,31 +6,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { api } from "@/trpc/react";
+import { useDeleteClass } from "@/hooks/classes";
+
 import { Ellipsis, Eye, Pencil, Trash } from "lucide-react";
 
 export const ClassDropdown = ({ id }: { id: string }) => {
-  const utils = api.useUtils();
-
-  const { mutate: deleteMutation } = api.classes.delete.useMutation({
-    onMutate: async () => {
-      void utils.classes.getAll.cancel();
-      const data = utils.classes.getAll.getData();
-
-      utils.classes.getAll.setData(undefined, (classes) => {
-        const filteredClasses = classes?.filter((itx) => itx.id !== id);
-        return filteredClasses;
-      });
-
-      return { data };
-    },
-
-    onError: (_err, _id, context) => {
-      utils.classes.getAll.setData(undefined, context?.data);
-    },
-
-    onSuccess: async () => utils.classes.getAll.invalidate(),
-  });
+  const { mutate: deleteMutation } = useDeleteClass();
 
   return (
     <DropdownMenu>

@@ -5,10 +5,10 @@ import { Wallet } from "lucide-react";
 import { CreatePayments } from "@/components/payments/form/create-payments";
 import { DataTable } from "@/components/payments/table/data-table";
 import { columns } from "@/components/payments/table/columns";
-import { api } from "@/trpc/react";
+import { useAllPayments } from "@/hooks/payments";
 
 const Page = () => {
-  const { data } = api.payments.getAll.useQuery();
+  const { data } =useAllPayments()
 
   return (
     <div className="space-y-6">

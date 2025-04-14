@@ -21,11 +21,11 @@ import {
 } from "@/components/ui/dialog";
 import React, { useRef } from "react";
 import { Loader } from "lucide-react";
-import { api } from "@/trpc/react";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { daysEnum, subjectInsertSchema } from "@/server/db/schemas";
 import { WeekdayPicker } from "./week-day-picker";
 import { SelectClass } from "./select-class";
+import { useSubjectById, useUpdateSubject } from "@/hooks/subjects";
 
 export const EditSubjectsDialog = ({
   children,
@@ -57,17 +57,10 @@ const formSchema = subjectInsertSchema
 
 const EditSubjectForm = ({ subjectId }: { subjectId: string }) => {
   const ref = useRef<HTMLButtonElement | null>(null);
-  const utils = api.useUtils();
 
-  const { data: subjectData, isLoading } =
-    api.subjects.getById.useQuery(subjectId);
+  const { data: subjectData, isLoading } = useSubjectById(subjectId);
 
-  const { mutateAsync } = api.subjects.update.useMutation({
-    onSuccess: async () => {
-      void utils.subjects.getById.invalidate();
-      ref.current?.click();
-    },
-  });
+  const { mutateAsync } = useUpdateSubject(subjectId);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -84,13 +77,14 @@ const EditSubjectForm = ({ subjectId }: { subjectId: string }) => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
-    await mutateAsync({
-      id: subjectId,
-      data: {
+    await mutateAsync(
+      {
+        id: subjectId,
         ...data,
         classId: data.classId === "other" ? null : data.classId,
       },
-    });
+      { onSettled: () => ref.current?.click() },
+    );
   };
 
   return (

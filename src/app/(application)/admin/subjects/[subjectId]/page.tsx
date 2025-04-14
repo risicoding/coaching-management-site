@@ -4,18 +4,18 @@ import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { InfoBar } from "@/components/info-bar";
 import { Clipboard, LayoutList, Pen } from "lucide-react";
-import { api } from "@/trpc/react";
 import { env } from "@/env";
 import { toast } from "sonner";
 import { SubjectsMenu } from "@/components/subjects/menu";
 import { EditSubjectsDialog } from "@/components/subjects/edit-subject";
+import { useSubjectById } from "@/hooks/subjects";
 
 const Page = () => {
   const params = useParams<{ subjectId: string }>();
 
   const { subjectId } = params;
 
-  const { data } = api.subjects.getById.useQuery(subjectId);
+  const { data } = useSubjectById(subjectId);
 
   const handleCopyLink = async () => {
     const url = new URL(
@@ -36,10 +36,10 @@ const Page = () => {
       <InfoBar Icon={LayoutList} header={data?.name ?? "loading"}>
         <div className="flex gap-2">
           <EditSubjectsDialog subjectId={subjectId}>
-          <Button variant="outline">
-            Edit
-            <Pen />
-          </Button>
+            <Button variant="outline">
+              Edit
+              <Pen />
+            </Button>
           </EditSubjectsDialog>
           <Button onClick={handleCopyLink}>
             Copy link <Clipboard />

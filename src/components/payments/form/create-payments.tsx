@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { paymentsInsertSchema } from "@/server/db/schemas";
+import { paymentInsertSchema } from "@/server/db/schemas";
 import { z } from "zod";
 import {
   Dialog,
@@ -22,13 +22,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserSelect } from "./user-select";
-import { api } from "@/trpc/react";
 import { MultiSelect } from "@/components/multi-select";
 import MonthSelect from "./month-select";
 import { HandCoins, Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { downloadPdf } from "@/components/invoice/invoice";
 import { getInvoiceNumber, setInvoiceNumber } from "@/actions/invoice-number";
+import { useAllUsers } from "@/hooks/user";
+import { useSubjectsByUser } from "@/hooks/subjects";
+import { useCreatePayment } from "@/hooks/payments";
 
 export const CreatePayments = () => {
   return (
@@ -46,7 +48,7 @@ export const CreatePayments = () => {
   );
 };
 
-const formSchema = paymentsInsertSchema.extend({
+const formSchema = paymentInsertSchema.extend({
   userId: z.string(),
   amount: z.coerce.number(),
   subjects: z.array(z.string()),
@@ -55,10 +57,8 @@ const formSchema = paymentsInsertSchema.extend({
 const CreatePaymentsForm = () => {
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
-  const utils = api.useUtils();
-
   // Fetch all users for the user selection dropdown
-  const { data: users } = api.users.getAll.useQuery();
+  const { data: users } = useAllUsers();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -75,7 +75,7 @@ const CreatePaymentsForm = () => {
   const userId = form.watch("userId");
 
   // Get subjects based on selected user
-  const { data: subjects } = api.subjects.getByUserId.useQuery(userId);
+  const { data: subjects } = useSubjectsByUser(userId);
 
   // Reset selected subjects when user changes
   useEffect(() => {
@@ -108,21 +108,13 @@ const CreatePaymentsForm = () => {
     form.setValue("amount", amount);
   }, [formSubjects, subjects, form]);
 
-  const { mutateAsync } = api.payments.create.useMutation({
-    onSuccess: async () => {
-      void utils.payments.invalidate();
-      closeRef.current?.click();
-      setInvoiceNumber();
-    },
-  });
+  const { mutateAsync } = useCreatePayment();
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const invoiceNumber = await getInvoiceNumber();
     console.log(invoiceNumber);
 
-    const user = utils.users.getAll
-      .getData()
-      ?.find((user) => user.id === data.userId);
+    const user = users?.find((user) => user.id === data.userId);
 
     if (!user) return;
 
@@ -136,7 +128,7 @@ const CreatePaymentsForm = () => {
 
     if (!selectedSubjects) return;
 
-    downloadPdf({
+    void downloadPdf({
       invoiceNumber:
         Array.from({ length: 3 - invoiceNumber.toString().length })
           .map(() => "0")
@@ -151,6 +143,9 @@ const CreatePaymentsForm = () => {
     console.log(data);
 
     await mutateAsync({ ...data, invoiceNumber });
+    await setInvoiceNumber();
+
+    closeRef.current?.click()
   };
 
   return (

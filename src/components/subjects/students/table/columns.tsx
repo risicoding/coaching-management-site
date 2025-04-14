@@ -1,12 +1,10 @@
-import { inferRouterOutputs } from "@trpc/server";
-import type { AppRouter } from "@/server/api/root";
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { User } from "lucide-react";
+import  type{ServerInferResponses} from '@ts-rest/core'
+import type{ InferSuccess } from "@/lib/inferSuccess";
+import type { userContract } from "@/server/api/contracts/user";
 
-type UserRouterOutput =
-  inferRouterOutputs<AppRouter>["users"]["getUsersBySubjectId"];
-
-export type User = NonNullable<UserRouterOutput>[0];
+export type User = InferSuccess<ServerInferResponses<typeof userContract>['getBySubjectId']>['body'][0]
 
 export const columns: ColumnDef<User>[] = [
   {

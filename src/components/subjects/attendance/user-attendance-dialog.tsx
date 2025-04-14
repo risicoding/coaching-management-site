@@ -1,13 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { api } from "@/trpc/react";
 import { SquareArrowOutUpRight, Loader } from "lucide-react";
 import { useParams } from "next/navigation";
 import { AttendanceCalendar } from "./attendance-calendar";
-import { getDaysInMonth  } from "@/lib/date";
+import { getDaysInMonth } from "@/lib/date";
 import { CalendarNavButton } from "@/components/ui/calendar-nav-button";
 import { useState } from "react";
 import { isSameMonth } from "date-fns";
+import { useByUserAndSubjectId } from "@/hooks/attendance";
+import { useSubjectById } from "@/hooks/subjects";
 
 const StatCard = ({ value, label }: { value: string; label?: string }) => (
   <Card className="flex items-center justify-center p-4 text-center font-bold">
@@ -23,15 +24,12 @@ export const UserAttendanceDialog = ({ userId }: { userId: string }) => {
   const { subjectId } = useParams<{ subjectId: string }>();
 
   const { data: attendanceData, isLoading: isAttendanceLoading } =
-    api.attendance.getAttendanceByUserIdSubjectId.useQuery({
-      userId,
-      subjectId,
-    });
+    useByUserAndSubjectId(userId, subjectId);
 
   console.log("month", month.getMonth());
 
   const { data: subjectData, isLoading: isSubjectLoading } =
-    api.subjects.getById.useQuery(subjectId);
+    useSubjectById(subjectId);
 
   const isLoading = isAttendanceLoading || isSubjectLoading;
 

@@ -3,8 +3,9 @@ import "@/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
-import { TRPCReactProvider } from "@/trpc/react";
-import {Toaster} from '@/components/ui/sonner'
+import QueryProvider from "./query-provider";
+
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Urban Classes",
@@ -18,8 +19,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body className="dark">
-        <TRPCReactProvider>{children}</TRPCReactProvider>
-        <Toaster/>
+        <QueryProvider>{children}</QueryProvider>
+        <Toaster />
       </body>
     </html>
   );

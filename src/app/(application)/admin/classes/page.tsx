@@ -8,13 +8,14 @@ import { Button } from "@/components/ui/button";
 import { AddClassForm } from "@/components/class/add-class";
 import { CollapsibleClass } from "@/components/class/collapsible-class";
 import { SubjectCard } from "@/components/subjects/subject-card";
-import { api } from "@/trpc/react";
 import Link from "next/link";
 import { CollapsibleCardHeaderSkeleton } from "@/components/skeleton/collapsible-class-skeleton";
+import { useAllClasses } from "@/hooks/classes";
+import { useAllSubjects } from "@/hooks/subjects";
 
 const Page = () => {
-  const { data: classesData, isLoading } = api.classes.getAll.useQuery();
-  const { data: subjectsData } = api.subjects.getAll.useQuery();
+  const { data: classesData, isLoading } = useAllClasses();
+  const { data: subjectsData } = useAllSubjects();
 
   return (
     <div className="space-y-4">
