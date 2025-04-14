@@ -2,9 +2,8 @@ import { initClient } from "@ts-rest/core";
 import { userContract } from "@/server/api/contracts/user";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { env } from "@/env";
-import { z } from "zod";
 
-const userClient = initClient(userContract, {
+export const userClient = initClient(userContract, {
   baseUrl: env.NEXT_PUBLIC_BETTER_AUTH_URL,
 });
 
@@ -27,6 +26,7 @@ export const useUserById = (id: string) =>
       return body;
     },
   });
+
 
 export const useUserByEmail = (email: string) =>
   useQuery({

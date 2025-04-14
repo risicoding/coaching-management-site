@@ -1,5 +1,3 @@
-import type { inferRouterOutputs } from "@trpc/server";
-import type { AppRouter } from "@/server/api/root";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Book, ChevronDown, User } from "lucide-react";
 import {
