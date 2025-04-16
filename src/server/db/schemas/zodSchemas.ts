@@ -59,7 +59,7 @@ export const paymentSelectSchema = z.object({
   userId: z.string(),
   amount: z.number().int(),
   month: z.coerce.date(),
-  createdAt: z.coerce.date().optional(),
+  createdAt: z.coerce.date(),
 });
 
 export const paymentsWithSubjectsUserSelectSchema = paymentSelectSchema.extend({

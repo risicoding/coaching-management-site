@@ -8,7 +8,7 @@ import { env } from "@/env";
 import { toast } from "sonner";
 import { SubjectsMenu } from "@/components/subjects/menu";
 import { EditSubjectsDialog } from "@/components/subjects/edit-subject";
-import { useSubjectById } from "@/hooks/subjects";
+import { useSubjectById } from "@/features/subjects/hooks";
 
 const Page = () => {
   const params = useParams<{ subjectId: string }>();

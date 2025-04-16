@@ -5,17 +5,18 @@ import { Plus, School } from "lucide-react";
 import { InfoBar } from "@/components/info-bar";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AddClassForm } from "@/components/class/add-class";
-import { CollapsibleClass } from "@/components/class/collapsible-class";
+import { AddClassForm } from "@/features/classes/components/add-class";
+import { CollapsibleClass } from "@/features/classes/components/collapsible-class";
 import { SubjectCard } from "@/components/subjects/subject-card";
 import Link from "next/link";
 import { CollapsibleCardHeaderSkeleton } from "@/components/skeleton/collapsible-class-skeleton";
-import { useAllClasses } from "@/hooks/classes";
-import { useAllSubjects } from "@/hooks/subjects";
+import { useQuery } from "@tanstack/react-query";
+import { getAllClasses } from "@/features/classes/data/options";
+import { getAllSubject } from "@/features/subjects/data/options";
 
 const Page = () => {
-  const { data: classesData, isLoading } = useAllClasses();
-  const { data: subjectsData } = useAllSubjects();
+  const { data: classesData, isLoading } = useQuery(getAllClasses);
+  const { data: subjectsData } = useQuery(getAllSubject);
 
   return (
     <div className="space-y-4">

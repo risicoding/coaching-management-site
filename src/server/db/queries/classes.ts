@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 
 export const classesQueries = {
   create: (classData: typeof classes.$inferInsert) =>
-    db.insert(classes).values(classData).returning(),
+    db.insert(classes).values(classData).returning({ id: classes.id }),
 
   getAll: () =>
     db.query.classes.findMany({
@@ -17,8 +17,12 @@ export const classesQueries = {
     }),
 
   update: (id: string, classData: Partial<typeof classes.$inferInsert>) =>
-    db.update(classes).set(classData).where(eq(classes.id, id)).returning(),
+    db
+      .update(classes)
+      .set(classData)
+      .where(eq(classes.id, id))
+      .returning({ id: classes.id }),
 
   delete: (id: string) =>
-    db.delete(classes).where(eq(classes.id, id)).returning(),
+    db.delete(classes).where(eq(classes.id, id)).returning({ id: classes.id }),
 };

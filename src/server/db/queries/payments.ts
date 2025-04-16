@@ -35,7 +35,7 @@ export const paymentQueries = {
 
     return result.map((r) => {
       const { paymentSubjects, ...rest } = r;
-      return { ...rest, subjects: paymentSubjects.map((p) => p.subject) };
+      return { ...rest, subjects: paymentSubjects.map((p) => p.subject!) };
     });
   },
 
@@ -61,7 +61,7 @@ export const paymentQueries = {
     if (!result) return undefined;
 
     const { paymentSubjects, ...rest } = result;
-    return { ...rest, subjects: paymentSubjects.map((p) => p.subject) };
+    return { ...rest, subjects: paymentSubjects.map((p) => p.subject!) };
   },
 
   getBySubjectId: async (subjectId: string) => {

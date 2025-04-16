@@ -22,6 +22,7 @@ type Payment = InferSuccess<ResponseShapes>["body"][0];
 
 export const columns: ColumnDef<Payment>[] = [
   {
+    id: "name",
     accessorKey: "user.name",
     header: "Name",
     cell: ({ row }) => (
@@ -40,6 +41,8 @@ export const columns: ColumnDef<Payment>[] = [
     ),
   },
 
+  { id: "email", accessorKey: "user.email", header: "Email" },
+  ,
   {
     accessorKey: "subjects",
     header: "Subjects",
@@ -99,11 +102,11 @@ export const columns: ColumnDef<Payment>[] = [
     header: "Payment Date",
     cell: ({ row }) => (
       <span>
-        {row.original.createdAt?.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "2-digit",
-        })}
+        {/*   {row.original.createdAt?.toLocaleDateString("en-US", { */}
+        {/*     month: "short", */}
+        {/*     day: "numeric", */}
+        {/*     year: "2-digit", */}
+        {/*   })} */}
       </span>
     ),
   },

@@ -7,6 +7,8 @@ import { Hono } from "hono";
 const app = new Hono();
 
 app.get("/", async (c) => {
+  console.log('hello');
+  
   try {
     const res = await classesQueries.getAll();
     return c.json(res);

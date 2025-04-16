@@ -37,7 +37,7 @@ export const AddSubjectsDialog = ({
 }) => {
   return (
     <Dialog>
-      <DialogTrigger>{children}</DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="w-full px-3 sm:w-3/4 sm:p-6">
         <DialogTitle>Add new Subject</DialogTitle>
         <AddSubjectForm classId={classId} />

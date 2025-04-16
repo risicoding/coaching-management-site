@@ -2,9 +2,8 @@
 
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
-import {type VariantProps, cva } from "class-variance-authority"
-import { LuPanelLeftClose } from "react-icons/lu";
-
+import { VariantProps, cva } from "class-variance-authority"
+import { PanelLeft } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -289,7 +288,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <LuPanelLeftClose/>
+      <PanelLeft />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
@@ -535,7 +534,6 @@ const sidebarMenuButtonVariants = cva(
         default: "h-8 text-sm",
         sm: "h-7 text-xs",
         lg: "h-12 text-sm group-data-[collapsible=icon]:!p-0",
-        md:'h-9 text-md'
       },
     },
     defaultVariants: {

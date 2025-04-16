@@ -1,6 +1,18 @@
 import { db } from "@/server/db/db";
 import { attendance } from "@/server/db/schemas/attendance";
-import { and, asc, count, eq, gte, lte, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  eq,
+  gte,
+  lte,
+  sql,
+  creata,
+  getTableColumns,
+} from "drizzle-orm";
+
+const attendanceColumns = getTableColumns(attendance);
 
 export const attendanceQueries = {
   create: async (attendanceData: typeof attendance.$inferInsert) => {
@@ -62,12 +74,7 @@ export const attendanceQueries = {
     const todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
     const result = await db
-      .select({
-        id: attendance.id,
-        date: attendance.date,
-        userId: attendance.userId,
-        createdAt: attendance.createdAt,
-      })
+      .select(attendanceColumns)
 
       .from(attendance)
       .where(
@@ -113,7 +120,7 @@ export const attendanceQueries = {
       .update(attendance)
       .set(attendanceData)
       .where(eq(attendance.id, id))
-      .returning();
+      .returning({ id: attendance.id });
   },
 
   delete: async ({
@@ -130,6 +137,6 @@ export const attendanceQueries = {
           eq(attendance.date, date),
         ),
       )
-      .returning({id:attendance.id});
+      .returning({ id: attendance.id });
   },
 };

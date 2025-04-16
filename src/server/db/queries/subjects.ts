@@ -6,7 +6,7 @@ import type { z } from "zod";
 
 export const subjectsQueries = {
   create: (subjectData: z.infer<typeof subjectInsertSchema>) =>
-    db.insert(subjects).values(subjectData).returning(),
+    db.insert(subjects).values(subjectData).returning({ id: subjects.id }),
 
   getById: (id: string) =>
     db.query.subjects.findFirst({
@@ -30,8 +30,15 @@ export const subjectsQueries = {
       .where(eq(userSubject.userId, userId)),
 
   update: (id: string, data: Partial<z.infer<typeof subjectInsertSchema>>) =>
-    db.update(subjects).set(data).where(eq(subjects.id, id)).returning(),
+    db
+      .update(subjects)
+      .set(data)
+      .where(eq(subjects.id, id))
+      .returning({ id: subjects.id }),
 
   delete: (id: string) =>
-    db.delete(subjects).where(eq(subjects.id, id)).returning({id:subjects.id}),
+    db
+      .delete(subjects)
+      .where(eq(subjects.id, id))
+      .returning({ id: subjects.id }),
 };

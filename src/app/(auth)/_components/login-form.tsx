@@ -41,7 +41,7 @@ const LoginForm = () => {
     });
 
     if (error) {
-      logger.error(error);
+     console.error(error);
       form.setError("email", { type: "validate", message: error.message });
       form.setError("password", { type: "validate", message: error.message });
       return;

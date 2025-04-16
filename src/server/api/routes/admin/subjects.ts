@@ -4,10 +4,10 @@ import { zValidator } from "@hono/zod-validator";
 import { subjectsQueries } from "@/server/db/queries/subjects";
 import { userSubjectQueries } from "@/server/db/queries/userSubject";
 import { subjectInsertSchema } from "@/server/db/schemas/zodSchemas";
-import { z } from "zod";
 import { honoError } from "@/lib/hono-error";
 
 const app = new Hono<{ Variables: Context }>();
+
 const subjectUpdateSchema = subjectInsertSchema.partial();
 
 app.post("/", zValidator("json", subjectInsertSchema), async (c) => {
@@ -34,8 +34,11 @@ app.get("/:id", async (c) => {
 });
 
 app.get("/", async (c) => {
+  console.log("hello");
   try {
     const subjects = await subjectsQueries.getAll();
+
+    console.log("subjects", subjects);
     return c.json(subjects);
   } catch (err) {
     return honoError("INTERNAL_SERVER_ERROR", c, err);
@@ -64,7 +67,6 @@ app.get("/user/:userId", async (c) => {
     return honoError("INTERNAL_SERVER_ERROR", c, err);
   }
 });
-
 
 app.put(
   "/:id",
@@ -104,5 +106,4 @@ app.delete("/:id", async (c) => {
   }
 });
 
-export {app as subjectsRouter}
-
+export { app as subjectsRouter };

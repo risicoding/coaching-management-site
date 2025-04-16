@@ -1,6 +1,6 @@
 "use client";
 
-import { AddSubjectsDialog } from "@/components/subjects/add-subjects";
+import { AddSubjectsDialog } from "@/features/subjects/components/add-subjects";
 import React from "react";
 import { SubjectCard } from "@/components/subjects/subject-card";
 import Link from "next/link";
@@ -8,21 +8,12 @@ import { InfoBar } from "@/components/info-bar";
 import { Button } from "@/components/ui/button";
 import { Folder, Plus } from "lucide-react";
 import { SubjectCardSkeleton } from "@/components/skeleton/subject-card-skeleton";
-import { useAllSubjects } from "@/hooks/subjects";
-import { useAllClasses } from "@/hooks/classes";
+import { useAllSubjects } from "@/features/subjects/hooks";
+import { useAllClasses } from "@/features/classes/hooks";
 
 const Page = () => {
-  return (
-    <div className="space-y-4">
-      <SubjectsInfoBar />
-    </div>
-  );
-};
-
-const SubjectsInfoBar = () => {
   const { data, isLoading } = useAllSubjects();
   const { data: classes } = useAllClasses();
-
   return (
     <div className="space-y-6">
       <InfoBar header="Subjects" Icon={Folder}>
