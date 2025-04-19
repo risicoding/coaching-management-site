@@ -7,16 +7,15 @@ import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AddClassForm } from "@/features/classes/components/add-class";
 import { CollapsibleClass } from "@/features/classes/components/collapsible-class";
-import { SubjectCard } from "@/components/subjects/subject-card";
+import { SubjectCard } from "@/features/subjects/components/subject-card";
 import Link from "next/link";
 import { CollapsibleCardHeaderSkeleton } from "@/components/skeleton/collapsible-class-skeleton";
-import { useQuery } from "@tanstack/react-query";
-import { getAllClasses } from "@/features/classes/data/options";
-import { getAllSubject } from "@/features/subjects/data/options";
+import { useAllClasses } from "@/features/classes/hooks";
+import { useAllSubjects } from "@/features/subjects/hooks";
 
 const Page = () => {
-  const { data: classesData, isLoading } = useQuery(getAllClasses);
-  const { data: subjectsData } = useQuery(getAllSubject);
+  const { data: classesData, isLoading } = useAllClasses();
+  const { data: subjectsData } = useAllSubjects();
 
   return (
     <div className="space-y-4">

@@ -9,6 +9,7 @@ import {
 
 import { Ellipsis, Eye, Pencil, Trash } from "lucide-react";
 import { useDeleteClass } from "../hooks";
+import { EditClassDialog } from "./edit-class";
 
 export const ClassDropdown = ({ id }: { id: string }) => {
   const { mutate: deleteMutation } = useDeleteClass();
@@ -21,12 +22,14 @@ export const ClassDropdown = ({ id }: { id: string }) => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuItem>
-          <Eye className="mr-2 h-4 w-4" /> Open
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Pencil className="mr-2 h-4 w-4" /> Edit
-        </DropdownMenuItem>
+        {/* <DropdownMenuItem> */}
+        {/*   <Eye className="mr-2 h-4 w-4" /> Open */}
+        {/* </DropdownMenuItem> */}
+        <EditClassDialog id={id}>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <Pencil className="mr-2 h-4 w-4" /> Edit
+          </DropdownMenuItem>
+        </EditClassDialog>
         <DropdownMenuItem
           className="text-red-500 hover:bg-red-100 dark:hover:bg-red-900"
           onClick={() => deleteMutation(id)}

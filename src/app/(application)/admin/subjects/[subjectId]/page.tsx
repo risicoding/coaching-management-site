@@ -6,8 +6,8 @@ import { InfoBar } from "@/components/info-bar";
 import { Clipboard, LayoutList, Pen } from "lucide-react";
 import { env } from "@/env";
 import { toast } from "sonner";
-import { SubjectsMenu } from "@/components/subjects/menu";
-import { EditSubjectsDialog } from "@/components/subjects/edit-subject";
+import { SubjectsMenu } from "@/features/subjects/components/menu";
+import { EditSubjectsDialog } from "@/features/subjects/components/edit-subject";
 import { useSubjectById } from "@/features/subjects/hooks";
 
 const Page = () => {

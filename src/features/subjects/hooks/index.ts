@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/axios-client";
 import type { Subject } from "../api/types";
 
@@ -43,13 +43,16 @@ export const useSubjectsByUserId = (id: string) =>
   });
 
 // CREATE subject
-export const useCreateSubject = () =>
-  useMutation({
+export const useCreateSubject = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: async (data: Partial<Subject>) => {
       const res = await api.post("/admin/subjects", data);
       return res.data as { id: string };
     },
+    onSettled: () => queryClient.invalidateQueries("subjects"),
   });
+};
 
 // UPDATE subject
 export const useUpdateSubject = () =>

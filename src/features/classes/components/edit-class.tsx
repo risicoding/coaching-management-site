@@ -13,26 +13,35 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import React, { useRef } from "react";
 import { Loader } from "lucide-react";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { useCreateClass } from "@/hooks/classes";
+import { useAllClasses, useUpdateClass } from "../hooks";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
-export const AddClassDialog = ({ children }: { children: React.ReactNode }) => {
+export const EditClassDialog = ({
+  children,
+  id,
+}: {
+  children: React.ReactNode;
+  id: string;
+}) => {
+  const { data } = useAllClasses();
+
+  const classNo = data?.find((c) => c.id === id)?.classNumber;
   return (
-    <Dialog>
-      <DialogTrigger>{children}</DialogTrigger>
-      <DialogContent className="w-3/4">
-        <DialogTitle>Add new class</DialogTitle>
-        <AddClassForm />
-      </DialogContent>
-    </Dialog>
+    <Sheet>
+      <SheetTrigger>{children}</SheetTrigger>
+      <SheetContent>
+        <SheetTitle>Edit class {classNo}</SheetTitle>
+        <EditClassForm id={id} classNo={classNo} />
+      </SheetContent>
+    </Sheet>
   );
 };
 
@@ -44,18 +53,24 @@ const formSchema = z.object({
     .min(1, { message: "Expected value more or equal to 1" }),
 });
 
-export const AddClassForm = () => {
+export const EditClassForm = ({
+  id,
+  classNo,
+}: {
+  id: string;
+  classNo?: number;
+}) => {
   const ref = useRef<HTMLButtonElement | null>(null);
 
-  const { mutateAsync } = useCreateClass();
+  const { mutate, isPending } = useUpdateClass();
 
   const form = useForm({
+    defaultValues: { classNo },
     resolver: zodResolver(formSchema),
-    defaultValues: { classNo: undefined },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    await mutateAsync({ classNumber: data.classNo });
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    mutate({ id, classNumber: data.classNo });
     ref.current?.click();
   };
 
@@ -72,14 +87,17 @@ export const AddClassForm = () => {
                 <Input
                   placeholder="Enter class number"
                   {...field}
-                  disabled={form.formState.isSubmitting}
+                  disabled={form.formState.isSubmitting || isPending}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={form.formState.isSubmitting}>
+        <Button
+          type="submit"
+          disabled={form.formState.isSubmitting || isPending}
+        >
           {form.formState.isSubmitting ? (
             <Loader className="animate-spin" />
           ) : (

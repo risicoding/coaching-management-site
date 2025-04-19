@@ -10,7 +10,7 @@ const app = new Hono();
 app.use(adminMiddleware);
 
 app.route("/attendance", attendanceRouter);
-app.route("/classes", classesRouter);
+app.route("/class", classesRouter);
 // app.route("/payments", paymentsRouter);
 app.route("/user", userRouter);
 app.route("/subjects", subjectsRouter);

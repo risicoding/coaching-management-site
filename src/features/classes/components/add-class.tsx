@@ -23,7 +23,7 @@ import React, { useRef } from "react";
 import { Loader } from "lucide-react";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useMutation } from "@tanstack/react-query";
-import { createClass } from "../data/options";
+import { useCreateClass } from "../hooks";
 
 export const AddClassDialog = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -48,7 +48,7 @@ const formSchema = z.object({
 export const AddClassForm = () => {
   const ref = useRef<HTMLButtonElement | null>(null);
 
-  const { mutateAsync } = useMutation(createClass);
+  const { mutateAsync } = useCreateClass();
 
   const form = useForm({
     resolver: zodResolver(formSchema),

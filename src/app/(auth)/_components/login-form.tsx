@@ -1,3 +1,4 @@
+"use client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -18,8 +19,7 @@ import { logger } from "@/lib/logger";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  password: z
-    .string()
+  password: z.string(),
 });
 
 const LoginForm = () => {
@@ -29,19 +29,17 @@ const LoginForm = () => {
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: "", password: "" },
   });
 
-
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    logger.log('Form data',data);
+    console.log(data);
     const { data: signInData, error } = await authClient.signIn.email({
       email: data.email,
       password: data.password,
     });
 
     if (error) {
-     console.error(error);
+      console.error(error);
       form.setError("email", { type: "validate", message: error.message });
       form.setError("password", { type: "validate", message: error.message });
       return;
@@ -50,7 +48,7 @@ const LoginForm = () => {
     logger.log(signInData);
 
     if (redirectUrl) {
-    return  router.push(redirectUrl);
+      return router.push(redirectUrl);
     }
 
     const { data: session } = await authClient.getSession();

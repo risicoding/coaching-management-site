@@ -12,7 +12,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AttendanceMenuCard } from "@/features/attendance/components/attendance-menu-card";
 import StudentsMenuCard from "./students-menu-card";
-import PaymentMenuCard from "@/components/subjects/payments/payment-menu-card";
+import { PaymentMenuCard } from "@/features/payments/components/subjectsmenu/payment-menu-card";
 
 export const SubjectsMenu = () => {
   const searchParams = useSearchParams();

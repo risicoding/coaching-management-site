@@ -14,6 +14,20 @@ app.on(["GET", "POST"], "/auth/*", (c) => {
   return auth.handler(c.req.raw);
 });
 
+app.get("/onboard", async (c) => {
+  const headers = c.req.raw.headers;
+
+  const session = await auth.api.getSession({ headers });
+
+  if (!session) return c.redirect("/login");
+
+  if (session.user.role === "admin") {
+    return c.redirect("/admin");
+  }
+
+  return c.redirect("/dashboard");
+});
+
 app.use(superjsonMiddleware);
 app.use(authMiddleware);
 app.route("/admin", adminRouter);
